@@ -48,10 +48,7 @@ def load_user(user_id):
     Takes a unicode format user id and uses it to retrieve the respective user
     object to be used by the login_manager
     '''
-    try:
-        user = session.query(Seller).filter_by(id=int(user_id)).first()
-    except:
-        user = session.query(Client).filter_by(id=int(user_id)).first()
+    user = session.query(User).filter_by(id=int(user_id)).first()
 
     return user
 
