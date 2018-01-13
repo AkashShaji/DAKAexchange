@@ -55,30 +55,30 @@ def load_user(user_id):
 def index():
     return "This is a test"
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     return "This is where users will signup"
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     return "This is where users will login"
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     return url_for(index)
 
-@app.route('/<user>/profile')
+@app.route('/<user>/profile', methods=['GET', 'POST'])
 def view_profile(user):
     return "This is where users can view their profile"
 
-@app.route('/<user>/profile/edit')
+@app.route('/<user>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user):
     return "This is where users can edit their profile"
 
-@app.route("/clientsearch")
+@app.route("/clientsearch", methods=['GET', 'POST'])
 def client_search():
     return "This is where search results for available clients will appear"
 
-@app.route("/sellersearch")
+@app.route("/sellersearch", methods=['GET', 'POST'])
 def seller_search():
     return "This is where search results for available sellers will appear"
