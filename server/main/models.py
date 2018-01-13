@@ -49,5 +49,33 @@ class User (Base):
             'swipe_price': self.swipe_price
         }
 
+class Transactions(Base):
+    __tablename__ = "transactions"
+
+    id = Column(Integer, primary_key=True)
+    accepted_status = Column(Boolean)
+
+    client = Column(Integer, ForeignKey('users.id'))
+    users = relationship(User, foreign_keys=[client])
+    seller = Column(Integer, ForeignKey('users.id'))
+    users = relationship(User, foreign_keys=[seller])
+
+    meet_time = Column(Date)
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'accepted': self.accepted,
+            'requester': self.requester,
+            'client': self.client,
+            'seller': self.seller,
+            'meet_time': self.meet_time,
+        }
+
+
 engine = create_engine('sqlite:///site.db')
 Base.metadata.create_all(engine)

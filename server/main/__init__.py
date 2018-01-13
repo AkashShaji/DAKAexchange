@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request, g, make_response
 from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
-from server.main.models import Base, User
+
+from server.main.models import Base, User, Transactions
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
@@ -193,9 +194,9 @@ def signup():
         # print(request.args['passinput'])
         return render_template('signup.html')
 
+@app.route('/<user_id>/profile', methods=['GET', 'POST'])
+def view_profile(user_id):
 
-@app.route('/profile', methods=['GET', 'POST'])
-def view_profile(user):
     if request.method == "POST":
         userID = request.form['user_id']
 
@@ -203,6 +204,8 @@ def view_profile(user):
         # Else
 
         return render_template('base.html', uID=userID)
+    else:
+        return render_template('profile.html')
 
 # @app.route('/<user>/profile', methods=['GET', 'POST'])
 # def view_profile(user):
@@ -216,11 +219,13 @@ def edit_profile(user):
 
 @app.route('/<user>/requests_sent', methods=['GET', 'POST'])
 def view_sent_requests(user):
+    user_requests = session.query(Transactions).filter_by(client=user).all()
     return "This is where a user can see the requests they've sent to other users"
 
 
 @app.route('/<user>/requests_received', methods=['GET', 'POST'])
 def view_received_requests(user):
+    user_requests = session.query(Transactions).filter_by(seller=user).all()
     return "This is where a user can see the requests they've received from other users"
 
 
