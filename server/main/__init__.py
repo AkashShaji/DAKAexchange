@@ -3,7 +3,7 @@ from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
 
-from main.models import Base, User
+from main.models import Base, User, Transactions
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
@@ -220,10 +220,12 @@ def edit_profile(user):
 
 @app.route('/<user>/requests_sent', methods=['GET', 'POST'])
 def view_sent_requests(user):
+    user_requests = session.query(Transactions).filter_by(client=user).all()
     return "This is where a user can see the requests they've sent to other users"
 
 @app.route('/<user>/requests_received', methods=['GET', 'POST'])
 def view_received_requests(user):
+    user_requests = session.query(Transactions).filter_by(seller=user).all()
     return "This is where a user can see the requests they've received from other users"
 
 @app.route("/search", methods=['GET', 'POST'])
