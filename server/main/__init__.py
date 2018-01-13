@@ -200,7 +200,7 @@ def signup():
         # print(request.args['passinput'])
         return render_template('signup.html')
 
-@app.route('/profile', methods=['GET', 'POST'])
+@app.route('/<user>/profile', methods=['GET', 'POST'])
 def view_profile(user):
     if request.method == "POST":
         userID = request.form['user_id']
@@ -209,6 +209,8 @@ def view_profile(user):
         # Else
 
         return render_template('base.html', uID=userID)
+    else:
+        return render_template('profile.html')
 
 # @app.route('/<user>/profile', methods=['GET', 'POST'])
 # def view_profile(user):
