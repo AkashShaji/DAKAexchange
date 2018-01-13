@@ -6,6 +6,7 @@ from flask import session as login_session
 from server.main.models import Base, User, Transactions
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import and_
 from functools import wraps
 
 from server.main.models import User, Base
@@ -242,8 +243,8 @@ def request_user(selected_user):
 @app.route("/buy", methods=['GET', 'POST'])
 def buy():
     if request.method == "POST":
-        time = request.form['timeSearch']
-        time = datetime.datetime.strptime(time, '$H:%M')
+        timeRaw = request.form['timeSearch']
+        time = datetime.datetime.strptime(timeRaw, '%H:%M')
 
         sellers = session.query(User).filter(and_(User.start_time <= time, User.end_time >= time))
         sellers_data = []
@@ -257,7 +258,7 @@ def buy():
 
             sellers_data.append(data)
 
-        return render_template("buy.html", sellers=[], time=time)
+        return render_template("buy.html", sellers=[], time=timeRaw)
     else:
         current_time = datetime.datetime.now()
         time = str(current_time.hour) + ":" + str(current_time.minute)
