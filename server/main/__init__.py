@@ -2,12 +2,12 @@ from flask import Flask, jsonify, request, g, make_response
 from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
-
 from server.main.models import Base, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
+from server.main.models import User, Base
 import random, string, urllib3, json, codecs, datetime
 
 import flask_login
@@ -48,19 +48,15 @@ def load_user(user_id):
     Takes a unicode format user id and uses it to retrieve the respective user
     object to be used by the login_manager
     '''
-    try:
-        user = session.query(Seller).filter_by(id=int(user_id)).first()
-    except:
-        user = session.query(Client).filter_by(id=int(user_id)).first()
-
-    return user
+    
+    return session.query(User).filter_by(id=int(user_id)).first()
 
 # ================== END LOGIN REQUIREMENT CODE ===============
 
-@app.route('/')
 @app.route('/index')
 def index():
     return render_template('index.html')
+
 
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
@@ -100,62 +96,143 @@ def menu():
 
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    return "This is where users will signup"
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    email = request.args.get('email', 0, type=str)
-    psk = request.args.get('psk', 0, type=str)
+    if request.method == 'POST':
+        email = request.form['email']
+        psk = request.form['password']
 
-    print(email)
-    print(psk)
+        potential_user = session.query(User).filter(User.email == email).first()
+        if potential_user.verify_password(psk):
+            login_user(potential_user, force=True)
+            potential_user.is_authenticated = True
+            userid = potential_user.id
 
-    # Find out if the email and the psk match those on the server
-    # If true, return the user ID
-    # If false, return -1
-    
-    payload = -1
-    return jsonify(result=payload)
+            return redirect(url_for('view_profile'))
+        else:
+            flash("Wrong username or password")
+            redirect(url_for('login'))
+    else:
+        return render_template('login.html')
+
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    return url_for(index)
+    if request.method == 'POST':
+        flask_login.logout_user()
+        flash("Logout Successful")
+        return redirect(url_for('index'))
+    else:
+        return render_template('logout.html')
+
+
+@app.route('/')
+@app.route('/signup', methods=['GE0T', 'POST'])
+def signup():
+    if request.method == 'POST':
+        user = request.form['name']
+        email = request.form['email']
+        password = request.form['pass']
+        confirm = request.form['confirmpass']
+        # confirm_code = generate_code()
+
+        # check if user already exists
+        if session.query(User).filter(email == email).count() > 0:
+            flash("User already exists. Please login")
+            return redirect(url_for('login'))
+            # return jsonify(success=False, error="exists")
+        elif password != confirm:
+            flash("Passwords don't match")
+            return redirect(url_for('signup'))
+
+        newUser = User(name=user, email=email)
+        newUser.hash_password(password)
+
+        session.add(newUser)
+        session.commit()
+
+        login_user(newUser, force=True)
+        newUser.is_authenticated = True
+
+        flash("Welcome " + user + ". You have successfully signed up")
+
+        # msg = MIMEMultipart()
+        # msg['From'] = 'DoNotReply@teambuilder.com'
+        # msg['To'] = email
+        # msg['Subject'] = 'Email confirmation'
+        # body = render_template('email.html', name=user, code=confirm_code)
+        # msg.attach(MIMEText(body, 'html'))
+        #
+        # try:
+        #     server.starttls()
+        # except:
+        #     while True:8
+        #         try:
+        #             server.connect()
+        #             break
+        #         except:
+        #             pass
+        #     server.starttls()
+        #
+        # server.login('fbar620@gmail.com', 'fake_password')
+        # text = msg.as_string()
+        # try:
+        #     server.sendmail('DoNotReply@teambuilder.com', email, text)
+        # except:
+        #     flash("Invalid email")
+        #     return jsonify(success=False, error="email")
+        #
+        # server.quit()
+
+        return redirect(url_for('/login'))
+        # return jsonify(success=True, data=newUser.serialize) # JSON object
+    else:
+        # print(request.args['nameinput'])
+        # print(request.args['emailinput'])
+        # print(request.args['passinput'])
+        return render_template('signup.html')
+
 
 @app.route('/profile', methods=['GET', 'POST'])
 def view_profile(user):
     if request.method == "POST":
         userID = request.form['user_id']
-        
+
         # If the userID becomes invalid, push to a 404 page
         # Else
-        
+
         return render_template('base.html', uID=userID)
 
 # @app.route('/<user>/profile', methods=['GET', 'POST'])
 # def view_profile(user):
 #    return "This is where users can view their profile"
 
+
 @app.route('/<user>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user):
     return "This is where users can edit their profile"
+
 
 @app.route('/<user>/requests_sent', methods=['GET', 'POST'])
 def view_sent_requests(user):
     return "This is where a user can see the requests they've sent to other users"
 
+
 @app.route('/<user>/requests_received', methods=['GET', 'POST'])
 def view_received_requests(user):
     return "This is where a user can see the requests they've received from other users"
+
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     return "This is where search results will appear"
 
+
 @app.route("/search/<selected_user>", methods=['GET', 'POST'])
 def user_searched(selected_user):
     return "This is where information about the user clicked on from searching will appear"
+
 
 @app.route("/search/<selected_user>/request", methods=['GET', 'POST'])
 def request_user(selected_user):
