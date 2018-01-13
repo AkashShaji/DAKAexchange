@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Date, Float, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import Column, Integer, String, Boolean, Date, Float, ForeignKey, ForeignKeyConstraint, DateTime
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
@@ -21,8 +21,8 @@ class User (Base):
     is_authenticated = Column(Boolean)
     is_active = Column(Boolean)
 
-    start_time = Column(Date)
-    end_time = Column(Date)
+    start_time = Column(DateTime())
+    end_time = Column(DateTime())
 
     swipe_count = Column(Integer)
     swipe_price = Column(Float)
