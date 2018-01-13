@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
-from server.main.models import User
+from server.main.models import User, Base
 import random, string, urllib3, json, codecs, datetime
 
 import flask_login
@@ -116,6 +116,7 @@ def login():
     # If false, return -1
     
     payload = -1
+
     return jsonify(result=payload)
 
 
