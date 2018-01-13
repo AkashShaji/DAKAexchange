@@ -6,6 +6,10 @@ import java.io.IOException;
 
 public class MainWindowController
 {
+    public MainWindowController(){
+
+    }
+
     @FXML
     protected void initialize() throws IOException{
 

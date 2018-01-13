@@ -4,3 +4,9 @@ __pycache__
 *.db
 
 DAKAexchange\.iml
+
+out/production/DAKAexchange/controllers/MainWindowController\.class
+
+out/production/DAKAexchange/main\.class
+
+out/production/DAKAexchange/resources/view/MainWindowView\.fxml
