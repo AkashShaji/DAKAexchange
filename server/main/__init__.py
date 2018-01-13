@@ -49,7 +49,7 @@ def load_user(user_id):
     Takes a unicode format user id and uses it to retrieve the respective user
     object to be used by the login_manager
     '''
-    
+
     return session.query(User).filter_by(id=int(user_id)).first()
 
 # ================== END LOGIN REQUIREMENT CODE ===============
@@ -191,6 +191,7 @@ def signup():
 
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
+    user = session.query(User).filter_by(id=user_id).first()
 
     if request.method == "POST":
         userID = request.form['user_id']
@@ -200,7 +201,7 @@ def view_profile(user_id):
 
         return render_template('base.html', uID=userID)
     else:
-        return render_template('profile.html')
+        return render_template('profile.html', user=user)
 
 # @app.route('/<user>/profile', methods=['GET', 'POST'])
 # def view_profile(user):
