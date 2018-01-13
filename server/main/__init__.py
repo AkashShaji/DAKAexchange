@@ -98,34 +98,24 @@ def menu():
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
 
-@app.route('/loginRequest', methods=['GET', 'POST'])
-def loginRequest():
-    email = request.args.get('email', 0, type=str)
-    psk = request.args.get('psk', 0, type=str)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        psk = request.form['password']
 
-    print(email)
-    print(psk)
-
-    # Find out if the email and the psk match those on the server
-    # If true, return the user ID
-    # If false, return -1
-
-    payload = -1
-    try:
         potential_user = session.query(User).filter(User.email == email).first()
         if potential_user.verify_password(psk):
             login_user(potential_user, force=True)
-            payload = potential_user.id
             potential_user.is_authenticated = True
+            userid = potential_user.id
 
-            return jsonify(result=payload)
-    except:
-        return jsonify(result=-1)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    return render_template('login.html')
+            return redirect(url_for('view_profile', userID=userid))
+        else:
+            flash("Wrong username or password")
+            redirect(url_for('login'))
+    else:
+        return render_template('login.html')
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -196,7 +186,7 @@ def signup():
         #
         # server.quit()
 
-        return redirect(url_for('index'))
+        return redirect(url_for('/login'))
         # return jsonify(success=True, data=newUser.serialize) # JSON object
     else:
         # print(request.args['nameinput'])
