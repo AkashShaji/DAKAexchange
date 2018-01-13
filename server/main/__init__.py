@@ -246,7 +246,7 @@ def buy():
         timeRaw = request.form['timeSearch']
         time = datetime.datetime.strptime(timeRaw, '%H:%M')
 
-        sellers = session.query(User).filter(and_(User.start_time <= time, User.end_time >= time))
+        sellers = session.query(User).filter(and_(User.start_time.time() <= time.time(), User.end_time.time() >= time.time())).all()
         sellers_data = []
 
         for seller in sellers:
