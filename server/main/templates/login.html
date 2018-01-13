@@ -1,17 +1,58 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 style="text-align:center;">Log In</h1>
-<form action="{{ url_for('login') }}" method="post">
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" name="email" required>
+<div class="main-login main-center">
+    <!--TODO:// Deal with this bad larry-->
+    <form class="form-horizontal" method="post" action="javascript:void(0);" id="loginForm">
+        <div class="form-group">
+            <label for="email" class="cols-sm-2 control-label">Your Email</label>
+            <div class="cols-sm-10">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                    <input type="text" class="form-control" name="email" id="email"  placeholder="Enter your Email"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="cols-sm-2 control-label">Password</label>
+            <div class="cols-sm-10">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                    <input type="password" class="form-control" name="password" id="password"  placeholder="Enter your Password"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group ">
+            <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Login</button>
+        </div>
+    </form>
+    <div class="alert alert-danger" id="incorrectLogin" style="display: none">
+        Incorrect Email or Password!
     </div>
-    <div class="form-group">
-        <label for="pass">Password</label>
-        <input type="password" class="form-control" name="pass" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Log In</button>
-</form>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#loginForm").bind('submit', function () {
+            $.getJSON($SCRIPT_ROOT + "/loginRequest", {
+                email: $('input[name="email"]').val(),
+                psk: $('input[name="password"]').val()
+            }, function(data) {
+                if(data.result == -1) {
+                    $('#incorrectLogin').css("display", "block");
+                }
+                else {
+                    $('#loginForm').html('<form action="' + $SCRIPT_ROOT + '/profile" name="login" method="post" ' +
+                        'style="display:none;"><input type="text" name="user_id" value="' + data.result + '" />' +
+                        '</form>');
+                    document.forms['login'].submit();
+                }
+            });
+            return false;
+        });
+    });
+</script>
 
 {% endblock %}

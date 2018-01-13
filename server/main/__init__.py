@@ -54,7 +54,6 @@ def load_user(user_id):
 
 # ================== END LOGIN REQUIREMENT CODE ===============
 
-@app.route('/')
 @app.route('/index')
 def index():
     return render_template('index.html')
@@ -99,8 +98,8 @@ def menu():
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/loginRequest', methods=['GET', 'POST'])
+def loginRequest():
     email = request.args.get('email', 0, type=str)
     psk = request.args.get('psk', 0, type=str)
 
@@ -110,18 +109,23 @@ def login():
     # Find out if the email and the psk match those on the server
     # If true, return the user ID
     # If false, return -1
-    
+
     payload = -1
     try:
-      potential_user = session.query(User).filter(User.email == email).first()
-      if potential_user.verify_password(psk):
-          login_user(potential_user, force=True)
-          payload = potential_user.id
-          potential_user.is_authenticated = True
-         
-          return jsonify(result=payload)
+        potential_user = session.query(User).filter(User.email == email).first()
+        if potential_user.verify_password(psk):
+            login_user(potential_user, force=True)
+            payload = potential_user.id
+            potential_user.is_authenticated = True
+
+            return jsonify(result=payload)
     except:
-      return jsonify(result=-1)
+        return jsonify(result=-1)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -134,6 +138,7 @@ def logout():
         return render_template('logout.html')
 
 
+@app.route('/')
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -163,7 +168,7 @@ def signup():
         login_user(newUser, force=True)
         newUser.is_authenticated = True
 
-        flash("Welcome "+user+". You have successfully signed up")
+        flash("Welcome " + user + ". You have successfully signed up")
 
         # msg = MIMEMultipart()
         # msg['From'] = 'DoNotReply@teambuilder.com'
@@ -175,7 +180,7 @@ def signup():
         # try:
         #     server.starttls()
         # except:
-        #     while True:
+        #     while True:8
         #         try:
         #             server.connect()
         #             break
