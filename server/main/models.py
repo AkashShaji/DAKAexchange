@@ -56,10 +56,10 @@ class Transactions(Base):
     id = Column(Integer, primary_key=True)
     accepted_status = Column(Boolean)
 
-    requester = Column(Integer, ForeignKey('user.id'))
-    client = Column(Integer, ForeignKey('user.id'))
-    seller = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    client = Column(Integer, ForeignKey('users.id'))
+    users = relationship(User, foreign_keys=[client])
+    seller = Column(Integer, ForeignKey('users.id'))
+    users = relationship(User, foreign_keys=[seller])
 
     meet_time = Column(Date)
 
