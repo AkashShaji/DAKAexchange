@@ -1,4 +1,6 @@
 *.swp
 /.idea
+*.DS_Store
 __pycache__
 *.db
+*.pyc

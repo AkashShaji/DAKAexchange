@@ -106,15 +106,36 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return "This is where users will login"
+    email = request.args.get('email', 0, type=str)
+    psk = request.args.get('psk', 0, type=str)
+
+    print(email)
+    print(psk)
+
+    # Find out if the email and the psk match those on the server
+    # If true, return the user ID
+    # If false, return -1
+    
+    payload = -1
+    return jsonify(result=payload)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     return url_for(index)
 
-@app.route('/<user>/profile', methods=['GET', 'POST'])
+@app.route('/profile', methods=['GET', 'POST'])
 def view_profile(user):
-    return "This is where users can view their profile"
+    if request.method == "POST":
+        userID = request.form['user_id']
+        
+        # If the userID becomes invalid, push to a 404 page
+        # Else
+        
+        return render_template('base.html', uID=userID)
+
+# @app.route('/<user>/profile', methods=['GET', 'POST'])
+# def view_profile(user):
+#    return "This is where users can view their profile"
 
 @app.route('/<user>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user):
