@@ -64,7 +64,7 @@ def menu():
     # REQUEST URL:
     # https://www.dineoncampus.com/v1/location/menu.json?date=2018-01-13T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294
     # mess with the 'date' parameter to get menu for specific days
-    return return_template('menu.html')
+    return render_template('menu.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
