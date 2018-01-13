@@ -3,11 +3,11 @@ from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
 
-from main.models import Base, Seller, Client
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
+from server.main.models import User
 import random, string, urllib3, json, codecs, datetime
 
 import flask_login
@@ -48,12 +48,8 @@ def load_user(user_id):
     Takes a unicode format user id and uses it to retrieve the respective user
     object to be used by the login_manager
     '''
-    try:
-        user = session.query(Seller).filter_by(id=int(user_id)).first()
-    except:
-        user = session.query(Client).filter_by(id=int(user_id)).first()
 
-    return user
+    return session.query(User).filter_by(id=int(user_id)).first()
 
 # ================== END LOGIN REQUIREMENT CODE ===============
 
@@ -61,6 +57,7 @@ def load_user(user_id):
 @app.route('/index')
 def index():
     return render_template('index.html')
+
 
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
@@ -100,9 +97,11 @@ def menu():
 
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     return "This is where users will signup"
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -119,9 +118,11 @@ def login():
     payload = -1
     return jsonify(result=payload)
 
+
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     return url_for(index)
+
 
 @app.route('/profile', methods=['GET', 'POST'])
 def view_profile(user):
@@ -137,25 +138,31 @@ def view_profile(user):
 # def view_profile(user):
 #    return "This is where users can view their profile"
 
+
 @app.route('/<user>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user):
     return "This is where users can edit their profile"
+
 
 @app.route('/<user>/requests_sent', methods=['GET', 'POST'])
 def view_sent_requests(user):
     return "This is where a user can see the requests they've sent to other users"
 
+
 @app.route('/<user>/requests_received', methods=['GET', 'POST'])
 def view_received_requests(user):
     return "This is where a user can see the requests they've received from other users"
+
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     return "This is where search results will appear"
 
+
 @app.route("/search/<selected_user>", methods=['GET', 'POST'])
 def user_searched(selected_user):
     return "This is where information about the user clicked on from searching will appear"
+
 
 @app.route("/search/<selected_user>/request", methods=['GET', 'POST'])
 def request_user(selected_user):
