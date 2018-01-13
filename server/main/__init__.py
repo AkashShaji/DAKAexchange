@@ -72,6 +72,11 @@ def menu():
     if request.method == 'POST':
         date = str(request.form['date'])
         response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date='+date+'T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
+
+        if response['status'] == "error" or not date:
+            flash("Invalid entry")
+            return redirect(url_for('menu'))
+
         parsed_date = date.split("-")
 
         for period in response['menu']['periods'][0:-1]:
