@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
-import random, string, urllib3, json, codecs
+import random, string, urllib3, json, codecs, datetime
 
 import flask_login
 from flask_login import LoginManager, login_user
@@ -67,16 +67,38 @@ def menu():
     # REQUEST URL:
     # https://www.dineoncampus.com/v1/location/menu.json?date=2018-01-13T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294
     # mess with the 'date' parameter to get menu for specific days
-    breakfast_items = []
-    lunch_items = []
-    dinner_items = []
+    items = []
 
     if request.method == 'POST':
-        pass
+        date = str(request.form['date'])
+        response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date='+date+'T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
+
+        if response['status'] == "error" or not date:
+            flash("Invalid entry")
+            return redirect(url_for('menu'))
+
+        parsed_date = date.split("-")
+
+        for period in response['menu']['periods'][0:-1]:
+            period_items = []
+            for food_type in period['categories']:
+                period_items.append([(food_type['name'] + " - " + food["name"]) for food in food_type['items']])
+
+            items.append(period_items)
+
+        return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(int(parsed_date[1]))+"/"+str(int(parsed_date[2])))
     else:
-        response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date=2018-01-13T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
-        return response['status']
-        # return render_template('menu.html')
+        current_date = datetime.date.today()
+        response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date='+str(current_date.year) + '-' + str(current_date.month) + '-' + str(current_date.day) +'T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
+
+        for period in response['menu']['periods'][0:-1]:
+            period_items = []
+            for food_type in period['categories']:
+                period_items.append([(food_type['name'] + " - " + food["name"]) for food in food_type['items']])
+
+            items.append(period_items)
+
+        return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():

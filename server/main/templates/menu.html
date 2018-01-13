@@ -1,6 +1,61 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<p>This is the menu page</p>
+  <h1>Menu for {{ date }}</h1>
+
+  <form action="{{ url_for('menu') }}" method="POST">
+    <input type="date" name='date'>
+    <button type="submit">Update Menu</button>
+  </form>
+
+  <div class="row">
+      <div class="col-md-3">
+        <h3>Breakfast</h3>
+
+        <ul>
+          {% for cat in breakfast %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col-md-3">
+        <h3>Lunch</h3>
+
+        <ul>
+          {% for cat in lunch %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col-md-3">
+        <h3>Dinner</h3>
+
+        <ul>
+          {% for cat in dinner %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col-md-3">
+        <h3>Late Night</h3>
+
+        <ul>
+          {% for cat in late_night %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+  </div>
 
 {% endblock %}
