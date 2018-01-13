@@ -3,11 +3,12 @@ from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
 
-from main.models import Base, User, Transactions
+from server.main.models import Base, User, Transactions
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
+from server.main.models import User, Base
 import random, string, urllib3, json, codecs, datetime
 
 import flask_login
@@ -48,16 +49,15 @@ def load_user(user_id):
     Takes a unicode format user id and uses it to retrieve the respective user
     object to be used by the login_manager
     '''
-    user = session.query(User).filter_by(id=int(user_id)).first()
-
-    return user
+    
+    return session.query(User).filter_by(id=int(user_id)).first()
 
 # ================== END LOGIN REQUIREMENT CODE ===============
 
-@app.route('/')
 @app.route('/index')
 def index():
     return render_template('index.html')
+
 
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
@@ -97,33 +97,26 @@ def menu():
 
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
-    login_session['state'] = state
     if request.method == 'POST':
         email = request.form['email']
-        password = request.form['pass']
-        try:
-            user = session.query(User).filter_by(email=email).first()
+        psk = request.form['password']
 
-            if user.verify_password(password):
-                login_user(user, force=True)
-                flash("You have logged in successfully " + user.name)
-                user.is_authenticated = True
+        potential_user = session.query(User).filter(User.email == email).first()
+        if potential_user.verify_password(psk):
+            login_user(potential_user, force=True)
+            potential_user.is_authenticated = True
+            userid = potential_user.id
 
-                return redirect(url_for('index'))
-                # return jsonify(success=True, data=user.serialize)
-            else:
-                flash("You entered an incorrect password. Please try again")
-                return redirect(url_for('login'))
-                # return jsonify(success=False, error="pass") # JSON object
-        except:
-            flash("User does not exist. Please create an account")
-            return redirect(url_for('signup'))
-            # return jsonify(success=False, error="user") # JSON object
+            return redirect(url_for('view_profile'))
+        else:
+            flash("Wrong username or password")
+            redirect(url_for('login'))
     else:
-        return render_template('login.html', STATE=state)
+        return render_template('login.html')
+
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -135,7 +128,8 @@ def logout():
         return render_template('logout.html')
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/signup', methods=['GE0T', 'POST'])
 def signup():
     if request.method == 'POST':
         user = request.form['name']
@@ -145,7 +139,7 @@ def signup():
         # confirm_code = generate_code()
 
         # check if user already exists
-        if session.query(User).filter_by(email=email).first():
+        if session.query(User).filter(email == email).count() > 0:
             flash("User already exists. Please login")
             return redirect(url_for('login'))
             # return jsonify(success=False, error="exists")
@@ -160,9 +154,9 @@ def signup():
         session.commit()
 
         login_user(newUser, force=True)
-        newUser.is_authenticated=True
+        newUser.is_authenticated = True
 
-        flash("Welcome "+user+". You have successfully signed up")
+        flash("Welcome " + user + ". You have successfully signed up")
 
         # msg = MIMEMultipart()
         # msg['From'] = 'DoNotReply@teambuilder.com'
@@ -174,7 +168,7 @@ def signup():
         # try:
         #     server.starttls()
         # except:
-        #     while True:
+        #     while True:8
         #         try:
         #             server.connect()
         #             break
@@ -192,7 +186,7 @@ def signup():
         #
         # server.quit()
 
-        return redirect(url_for('index'))
+        return redirect(url_for('/login'))
         # return jsonify(success=True, data=newUser.serialize) # JSON object
     else:
         # print(request.args['nameinput'])
@@ -202,6 +196,7 @@ def signup():
 
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
+
     if request.method == "POST":
         userID = request.form['user_id']
 
@@ -216,28 +211,38 @@ def view_profile(user_id):
 # def view_profile(user):
 #    return "This is where users can view their profile"
 
+
 @app.route('/<user>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user):
     return "This is where users can edit their profile"
+
 
 @app.route('/<user>/requests_sent', methods=['GET', 'POST'])
 def view_sent_requests(user):
     user_requests = session.query(Transactions).filter_by(client=user).all()
     return "This is where a user can see the requests they've sent to other users"
 
+
 @app.route('/<user>/requests_received', methods=['GET', 'POST'])
 def view_received_requests(user):
     user_requests = session.query(Transactions).filter_by(seller=user).all()
     return "This is where a user can see the requests they've received from other users"
 
+
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     return "This is where search results will appear"
+
 
 @app.route("/search/<selected_user>", methods=['GET', 'POST'])
 def user_searched(selected_user):
     return "This is where information about the user clicked on from searching will appear"
 
+
 @app.route("/search/<selected_user>/request", methods=['GET', 'POST'])
 def request_user(selected_user):
     return "This is where users can request another user to sell to/buy from"
+
+@app.route("/buy", methods=['GET','POST'])
+def buy():
+    return render_template("buy.html")
