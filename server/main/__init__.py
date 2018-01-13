@@ -84,7 +84,18 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return "This is where users will login"
+    email = request.args.get('email', 0, type=str)
+    psk = request.args.get('psk', 0, type=str)
+
+    print(email)
+    print(psk)
+
+    # Find out if the email and the psk match those on the server
+    # If true, return the user ID
+    # If false, return -1
+    
+    payload = -1
+    return jsonify(result=payload)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
