@@ -111,9 +111,9 @@ def view_profile(user):
         
         return render_template('base.html', uID=userID)
 
-@app.route('/<user>/profile', methods=['GET', 'POST'])
-def view_profile(user):
-    return "This is where users can view their profile"
+# @app.route('/<user>/profile', methods=['GET', 'POST'])
+# def view_profile(user):
+#    return "This is where users can view their profile"
 
 @app.route('/<user>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user):
