@@ -11,13 +11,13 @@
         <tabs>
           <Tab text="Offers">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="380.0" prefWidth="600.0">
+              <AnchorPane fx:id="offers" minHeight="0.0" minWidth="0.0" prefHeight="380.0" prefWidth="600.0">
               </AnchorPane>
             </content>
           </Tab>
           <Tab text="Account">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="380.0" prefWidth="600.0" />
+              <AnchorPane fx:id="account" minHeight="0.0" minWidth="0.0" prefHeight="380.0" prefWidth="600.0" />
             </content>
           </Tab>
         </tabs>
