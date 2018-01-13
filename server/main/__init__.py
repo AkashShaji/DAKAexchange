@@ -108,7 +108,6 @@ def login():
         if potential_user.verify_password(psk):
             login_user(potential_user, force=True)
             potential_user.is_authenticated = True
-            userid = potential_user.id
 
             return redirect(url_for('view_profile'))
         else:
@@ -129,7 +128,7 @@ def logout():
 
 
 @app.route('/')
-@app.route('/signup', methods=['GE0T', 'POST'])
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         user = request.form['name']
@@ -187,11 +186,7 @@ def signup():
         # server.quit()
 
         return redirect(url_for('/login'))
-        # return jsonify(success=True, data=newUser.serialize) # JSON object
     else:
-        # print(request.args['nameinput'])
-        # print(request.args['emailinput'])
-        # print(request.args['passinput'])
         return render_template('signup.html')
 
 
