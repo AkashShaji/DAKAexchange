@@ -258,4 +258,6 @@ def buy():
 
         return render_template("buy.html", sellers=[], time=time)
     else:
-        return render_template("buy.html", sellers=[], time=datetime.datetime.now())
+        current_time = datetime.datetime.now()
+        time = str(current_time.hour) + ":" + str(current_time.minute)
+        return render_template("buy.html", sellers=[], time=time)
