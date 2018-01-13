@@ -200,8 +200,8 @@ def signup():
         # print(request.args['passinput'])
         return render_template('signup.html')
 
-@app.route('/<user>/profile', methods=['GET', 'POST'])
-def view_profile(user):
+@app.route('/<user_id>/profile', methods=['GET', 'POST'])
+def view_profile(user_id):
     if request.method == "POST":
         userID = request.form['user_id']
 
