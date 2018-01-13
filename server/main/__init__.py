@@ -3,12 +3,11 @@ from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
 
-from server.main.models import Base, User, Transactions
+from main.models import Base, User, Transactions
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
-from main.models import User, Base
 import random, string, urllib3, json, codecs, datetime
 
 import flask_login
