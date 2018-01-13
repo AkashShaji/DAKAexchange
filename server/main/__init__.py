@@ -2,8 +2,7 @@ from flask import Flask, jsonify, request, g, make_response
 from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
-
-from main.models import Base, User
+from server.main.models import Base, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
@@ -238,3 +237,7 @@ def user_searched(selected_user):
 @app.route("/search/<selected_user>/request", methods=['GET', 'POST'])
 def request_user(selected_user):
     return "This is where users can request another user to sell to/buy from"
+
+@app.route("/buy", methods=['GET','POST'])
+def buy():
+    return render_template("buy.html")
