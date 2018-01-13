@@ -3,7 +3,7 @@ from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
 
-from main.models import Base, User
+from main.models import Base, Seller, Client
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps

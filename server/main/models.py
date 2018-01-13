@@ -8,8 +8,8 @@ import random, string
 
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = 'users'
+class Seller(Base):
+    __tablename__ = 'sellers'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(200), nullable=False)
@@ -37,6 +37,34 @@ class User(Base):
             'class': self.class_year,
         }
 
+class Client(Base):
+    __tablename__ = 'clients'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(200), nullable=False)
+    email = Column(String(200))
+    class_year = Column(String(50))
+    password_hash = Column(String(300))
+    is_authenticated = Column(Boolean)
+    is_active = Column(Boolean)
+
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'class': self.class_year,
+        }
 
 engine = create_engine('sqlite:///site.db')
 Base.metadata.create_all(engine)
