@@ -3,6 +3,7 @@ from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
 
+from main.models import Base, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
@@ -48,7 +49,7 @@ def load_user(user_id):
     Takes a unicode format user id and uses it to retrieve the respective user
     object to be used by the login_manager
     '''
-
+    
     return session.query(User).filter_by(id=int(user_id)).first()
 
 # ================== END LOGIN REQUIREMENT CODE ===============
@@ -97,7 +98,6 @@ def menu():
 
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     return "This is where users will signup"
@@ -116,27 +116,102 @@ def login():
     # If false, return -1
     
     payload = -1
-
-    potential_user = session.query(User).filter(User.email == email).first()
-    if potential_user.verify_password(psk):
-        payload = potential_user.id
-
-    return jsonify(result=payload)
+    try:
+      potential_user = session.query(User).filter(User.email == email).first()
+      if potential_user.verify_password(psk):
+          login_user(potential_user, force=True)
+          payload = potential_user.id
+          potential_user.is_authenticated = True
+         
+          return jsonify(result=payload)
+    except:
+      return jsonify(result=-1)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    return url_for(index)
+    if request.method == 'POST':
+        flask_login.logout_user()
+        flash("Logout Successful")
+        return redirect(url_for('index'))
+    else:
+        return render_template('logout.html')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        user = request.form['name']
+        email = request.form['email']
+        password = request.form['pass']
+        confirm = request.form['confirmpass']
+        # confirm_code = generate_code()
+
+        # check if user already exists
+        if session.query(User).filter_by(email=email).first():
+            flash("User already exists. Please login")
+            return redirect(url_for('login'))
+            # return jsonify(success=False, error="exists")
+        elif password != confirm:
+            flash("Passwords don't match")
+            return redirect(url_for('signup'))
+
+        newUser = User(name=user, email=email)
+        newUser.hash_password(password)
+
+        session.add(newUser)
+        session.commit()
+
+        login_user(newUser, force=True)
+        newUser.is_authenticated=True
+
+        flash("Welcome "+user+". You have successfully signed up")
+
+        # msg = MIMEMultipart()
+        # msg['From'] = 'DoNotReply@teambuilder.com'
+        # msg['To'] = email
+        # msg['Subject'] = 'Email confirmation'
+        # body = render_template('email.html', name=user, code=confirm_code)
+        # msg.attach(MIMEText(body, 'html'))
+        #
+        # try:
+        #     server.starttls()
+        # except:
+        #     while True:
+        #         try:
+        #             server.connect()
+        #             break
+        #         except:
+        #             pass
+        #     server.starttls()
+        #
+        # server.login('fbar620@gmail.com', 'fake_password')
+        # text = msg.as_string()
+        # try:
+        #     server.sendmail('DoNotReply@teambuilder.com', email, text)
+        # except:
+        #     flash("Invalid email")
+        #     return jsonify(success=False, error="email")
+        #
+        # server.quit()
+
+        return redirect(url_for('index'))
+        # return jsonify(success=True, data=newUser.serialize) # JSON object
+    else:
+        # print(request.args['nameinput'])
+        # print(request.args['emailinput'])
+        # print(request.args['passinput'])
+        return render_template('signup.html')
 
 
 @app.route('/profile', methods=['GET', 'POST'])
 def view_profile(user):
     if request.method == "POST":
         userID = request.form['user_id']
-        
+
         # If the userID becomes invalid, push to a 404 page
         # Else
-        
+
         return render_template('base.html', uID=userID)
 
 # @app.route('/<user>/profile', methods=['GET', 'POST'])
