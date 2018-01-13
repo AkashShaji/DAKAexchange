@@ -104,6 +104,10 @@ def login():
         email = request.form['email']
         psk = request.form['password']
 
+        if session.query(User).filter(User.email == email).count() == 0:
+            flash("Wrong username or password")
+            return redirect(url_for('login'))
+
         potential_user = session.query(User).filter(User.email == email).first()
         if potential_user.verify_password(psk):
             login_user(potential_user, force=True)
