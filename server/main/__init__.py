@@ -75,10 +75,22 @@ def view_profile(user):
 def edit_profile(user):
     return "This is where users can edit their profile"
 
-@app.route("/clientsearch", methods=['GET', 'POST'])
-def client_search():
-    return "This is where search results for available clients will appear"
+@app.route('/<user>/requests_sent', methods=['GET', 'POST'])
+def view_sent_requests(user):
+    return "This is where a user can see the requests they've sent to other users"
 
-@app.route("/sellersearch", methods=['GET', 'POST'])
-def seller_search():
-    return "This is where search results for available sellers will appear"
+@app.route('/<user>/requests_received', methods=['GET', 'POST'])
+def view_received_requests(user):
+    return "This is where a user can see the requests they've received from other users"
+
+@app.route("/search", methods=['GET', 'POST'])
+def search():
+    return "This is where search results will appear"
+
+@app.route("/search/<selected_user>", methods=['GET', 'POST'])
+def user_searched(selected_user):
+    return "This is where information about the user clicked on from searching will appear"
+
+@app.route("/search/<selected_user>/request")
+def request_user(selected_user):
+    return "This is where users can request another user to sell to/buy from"
