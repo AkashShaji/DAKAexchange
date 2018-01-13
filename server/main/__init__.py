@@ -110,7 +110,7 @@ def login():
             potential_user.is_authenticated = True
             userid = potential_user.id
 
-            return redirect(url_for('view_profile', userID=userid))
+            return redirect(url_for('view_profile'))
         else:
             flash("Wrong username or password")
             redirect(url_for('login'))
@@ -129,7 +129,7 @@ def logout():
 
 
 @app.route('/')
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup', methods=['GE0T', 'POST'])
 def signup():
     if request.method == 'POST':
         user = request.form['name']
