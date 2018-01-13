@@ -70,7 +70,18 @@ def menu():
     items = []
 
     if request.method == 'POST':
-        pass
+        date = str(request.form['date'])
+        response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date='+date+'T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
+        parsed_date = date.split("-")
+
+        for period in response['menu']['periods'][0:-1]:
+            period_items = []
+            for food_type in period['categories']:
+                period_items.append([(food_type['name'] + " - " + food["name"]) for food in food_type['items']])
+
+            items.append(period_items)
+
+        return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(int(parsed_date[1]))+"/"+str(int(parsed_date[2])))
     else:
         current_date = datetime.date.today()
         response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date='+str(current_date.year) + '-' + str(current_date.month) + '-' + str(current_date.day) +'T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
@@ -82,8 +93,7 @@ def menu():
 
             items.append(period_items)
 
-        # return response['status']
-        return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3])
+        return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
