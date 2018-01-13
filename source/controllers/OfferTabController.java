@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 
 public class OfferTabController extends TabController {
-    @FXML VBox Offers;
+    @FXML VBox offers;
 
     public OfferTabController(MainWindowController parent){
         super(parent);
