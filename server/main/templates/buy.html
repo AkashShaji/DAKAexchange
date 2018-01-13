@@ -1,22 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="col" >
-    <div class="text-lg-center">
-        <div class="text-center">
-            <h2>Buy a swipe</h2>
+<div class="grid">
+    <div class="row">
+        <div class="col" >
+            <div class="text-lg-center">
+                <div class="text-center">
+                    <h2>Buy a swipe</h2>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        Approximate Swipe In time
-    </div>
-    <div class="col">
-        <input name="timeSearch" id="timeSearch" type="date">
-    </div>
-    <div class="col">
-        <button style="background-color: #660000" id="searchButton" type="submit" class="btn btn-primary btn-block">Search</button>
+        <div class="row">
+            <div class="col-sm-4">
+                Approximate Swipe In time
+            </div>
+            <div class="col-sm-4">
+                <input name="timeSearch" id="timeSearch" type="date">
+            </div>
+            <div class="col-sm-4">
+                <button style="background-color: #660000" id="searchButton" type="submit" class="btn btn-primary btn-block">Search</button>
+            </div>
+        </div>
     </div>
 </div>
 
