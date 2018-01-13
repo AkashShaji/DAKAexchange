@@ -239,10 +239,11 @@ def request_user(selected_user):
     return "This is where users can request another user to sell to/buy from"
 
 
-@app.route("/buy", methods=['GET','POST'])
+@app.route("/buy", methods=['GET', 'POST'])
 def buy():
     if request.method == "POST":
-        time = request.form['time']
+        time = request.form['timeSearch']
+        time = datetime.datetime.strptime(time, '$H:%M')
 
         sellers = session.query(User).filter(and_(User.start_time <= time, User.end_time >= time))
         sellers_data = []
