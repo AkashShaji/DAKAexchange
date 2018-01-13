@@ -54,12 +54,28 @@ class Transactions(Base):
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True)
+    accepted = Column(Boolean)
+
     requester = Column(Integer, ForeignKey('user.id'))
     client = Column(Integer, ForeignKey('user.id'))
     seller = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
-    accepted = Column(Boolean)
 
+    meet_time = Column(Date)
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'accepted': self.accepted,
+            'requester': self.requester,
+            'client': self.client,
+            'seller': self.seller,
+            'meet_time': self.meet_time,
+        }
 
 
 engine = create_engine('sqlite:///site.db')
