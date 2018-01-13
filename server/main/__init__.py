@@ -117,6 +117,10 @@ def login():
     
     payload = -1
 
+    potential_user = session.query(User).filter(User.email == email).first()
+    if potential_user.verify_password(psk):
+        payload = potential_user.id
+
     return jsonify(result=payload)
 
 
