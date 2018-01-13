@@ -98,10 +98,6 @@ def menu():
 
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    return "This is where users will signup"
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -148,13 +144,15 @@ def signup():
         # confirm_code = generate_code()
 
         # check if user already exists
-        if session.query(User).filter_by(email=email).first():
+        if session.query(User).filter(email == email).count() > 0:
             flash("User already exists. Please login")
             return redirect(url_for('login'))
             # return jsonify(success=False, error="exists")
         elif password != confirm:
             flash("Passwords don't match")
             return redirect(url_for('signup'))
+
+        flash("New user nigga")
 
         newUser = User(name=user, email=email)
         newUser.hash_password(password)
@@ -163,7 +161,7 @@ def signup():
         session.commit()
 
         login_user(newUser, force=True)
-        newUser.is_authenticated=True
+        newUser.is_authenticated = True
 
         flash("Welcome "+user+". You have successfully signed up")
 
