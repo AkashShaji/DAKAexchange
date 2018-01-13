@@ -11,6 +11,9 @@
             prefHeight="380.0" prefWidth="600.0">
     <children>
         <VBox fx:id="Offers" prefHeight="380" prefWidth="600">
+            <children>
+                <Label prefWidth="600" prefHeight="100" text="ITS LIT HOOOOOOOOOOOOOOOOOOOOOOOOOMIE"/>
+            </children>
         </VBox>
     </children>
 </AnchorPane>

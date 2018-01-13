@@ -14,21 +14,19 @@ public class MainWindowController {
     AccountTabController accountTabController;
 
     public MainWindowController(){
-        offerTabController = new OfferTabController();
-        accountTabController = new AccountTabController();
+        offerTabController = new OfferTabController(this);
+        accountTabController = new AccountTabController(this);
     }
 
     @FXML
     protected void initialize() throws IOException{
         // Loads the offer menu
         FXMLLoader offerLoader = new FXMLLoader(getClass().getResource("/resources/view/OfferTabView.fxml"));
-        offerLoader.setRoot(offers);
         offerLoader.setController(offerTabController);
-        offerLoader.load();
+        offers=offerLoader.load();
         // Loads the account menu
         FXMLLoader accountLoader = new FXMLLoader(getClass().getResource("/resources/view/AccountTabView.fxml"));
-        accountLoader.setRoot(account);
         accountLoader.setController(accountTabController);
-        accountLoader.load();
+        account=accountLoader.load();
     }
 }

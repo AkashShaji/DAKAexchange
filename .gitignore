@@ -10,3 +10,7 @@ out/production/DAKAexchange/controllers/MainWindowController\.class
 out/production/DAKAexchange/main\.class
 
 out/production/DAKAexchange/resources/view/MainWindowView\.fxml
+
+out/production/DAKAexchange/controllers/
+
+out/production/DAKAexchange/resources/view/OfferTabView\.fxml
