@@ -10,7 +10,6 @@ from functools import wraps
 
 from server.main.models import User, Base
 import random, string, urllib3, json, codecs, datetime
-
 import flask_login
 from flask_login import LoginManager, login_user
 
@@ -189,6 +188,7 @@ def signup():
     else:
         return render_template('signup.html')
 
+
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
 
@@ -238,6 +238,24 @@ def user_searched(selected_user):
 def request_user(selected_user):
     return "This is where users can request another user to sell to/buy from"
 
+
 @app.route("/buy", methods=['GET','POST'])
 def buy():
-    return render_template("buy.html")
+    if request.method == "POST":
+        time = request.form['time']
+
+        sellers = session.query(User).filter(and_(User.start_time <= time, User.end_time >= time))
+        sellers_data = []
+
+        for seller in sellers:
+            data = []
+
+            data.append("Profile Picture")
+            data.append(seller.name)
+            data.append(seller.swipe_price)
+
+            sellers_data.append(data)
+
+        return render_template("buy.html", sellers=[], time=time)
+    else:
+        return render_template("buy.html", sellers=[], time=datetime.datetime.now())

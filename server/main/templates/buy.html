@@ -10,16 +10,24 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-4">
-                Approximate Swipe In time
+        <div class="row" style="padding-top: 10px">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-3">
+                <div class="text-right">
+                    Approximate Swipe In time
+                </div>
             </div>
-            <div class="col-sm-4">
-                <input name="timeSearch" id="timeSearch" type="date">
+            <div class="col-sm-3">
+                <input name="timeSearch" id="timeSearch" type="time">
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3"></div>
+        </div>
+        <div class="row mt-sm-5" style="padding-top: 10px">
+            <div class="col-sm-5"></div>
+            <div class="col-sm-2">
                 <button style="background-color: #660000" id="searchButton" type="submit" class="btn btn-primary btn-block">Search</button>
             </div>
+            <div class="col-sm-5"></div>
         </div>
     </div>
 </div>
@@ -27,31 +35,5 @@
 <table class="table table-striped" id="swipesTable">
     <tbody></tbody>
 </table>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#searchButton').click(function () {
-            $.getJSON($SCRIPT_ROOT + "/getAvailableSellers", {
-                time: $("#timeSearch").value
-            }, function (data) {
-                $('#swipesTable tr').remove();
-
-                if(data.length === 0) {
-                    $('table tbody').append("<center>Sorry, no swipes available!</center>");
-                }
-                else {
-                    for(var i = 0; i < data.length; i++) {
-                        var markup = "<tr><td>" + data[i][0] + "</td>" +
-                            "<td>" + data[i][1] + "</td>" +
-                            "<td>" + data[i][4] + "</td>" +
-                            "<td> Swipe me! </tr>";
-
-                        $('table tbody').append(markup);
-                    }
-                }
-            });
-        });
-    });
-</script>
 
 {% endblock %}
