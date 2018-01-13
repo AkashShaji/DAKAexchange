@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
-from server.main.models import User, Base
+from main.models import User, Base
 import random, string, urllib3, json, codecs, datetime
 
 import flask_login
