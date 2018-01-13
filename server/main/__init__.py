@@ -3,7 +3,7 @@ from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
 
-from main.models import Base, Seller, Client
+from main.models import Base, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
@@ -100,37 +100,117 @@ def menu():
 
         return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3], date=str(current_date.month)+"/"+str(current_date.day))
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    return "This is where users will signup"
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    email = request.args.get('email', 0, type=str)
-    psk = request.args.get('psk', 0, type=str)
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
+    login_session['state'] = state
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['pass']
+        try:
+            user = session.query(User).filter_by(email=email).first()
 
-    print(email)
-    print(psk)
+            if user.verify_password(password):
+                login_user(user, force=True)
+                flash("You have logged in successfully " + user.name)
+                user.is_authenticated = True
 
-    # Find out if the email and the psk match those on the server
-    # If true, return the user ID
-    # If false, return -1
-    
-    payload = -1
-    return jsonify(result=payload)
+                return redirect(url_for('index'))
+                # return jsonify(success=True, data=user.serialize)
+            else:
+                flash("You entered an incorrect password. Please try again")
+                return redirect(url_for('login'))
+                # return jsonify(success=False, error="pass") # JSON object
+        except:
+            flash("User does not exist. Please create an account")
+            return redirect(url_for('signup'))
+            # return jsonify(success=False, error="user") # JSON object
+    else:
+        return render_template('login.html', STATE=state)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    return url_for(index)
+    if request.method == 'POST':
+        flask_login.logout_user()
+        flash("Logout Successful")
+        return redirect(url_for('index'))
+    else:
+        return render_template('logout.html')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        user = request.form['name']
+        email = request.form['email']
+        password = request.form['pass']
+        confirm = request.form['confirmpass']
+        # confirm_code = generate_code()
+
+        # check if user already exists
+        if session.query(User).filter_by(email=email).first():
+            flash("User already exists. Please login")
+            return redirect(url_for('login'))
+            # return jsonify(success=False, error="exists")
+        elif password != confirm:
+            flash("Passwords don't match")
+            return redirect(url_for('signup'))
+
+        newUser = User(name=user, email=email)
+        newUser.hash_password(password)
+
+        session.add(newUser)
+        session.commit()
+
+        login_user(newUser, force=True)
+        newUser.is_authenticated=True
+
+        flash("Welcome "+user+". You have successfully signed up")
+
+        # msg = MIMEMultipart()
+        # msg['From'] = 'DoNotReply@teambuilder.com'
+        # msg['To'] = email
+        # msg['Subject'] = 'Email confirmation'
+        # body = render_template('email.html', name=user, code=confirm_code)
+        # msg.attach(MIMEText(body, 'html'))
+        #
+        # try:
+        #     server.starttls()
+        # except:
+        #     while True:
+        #         try:
+        #             server.connect()
+        #             break
+        #         except:
+        #             pass
+        #     server.starttls()
+        #
+        # server.login('fbar620@gmail.com', 'fake_password')
+        # text = msg.as_string()
+        # try:
+        #     server.sendmail('DoNotReply@teambuilder.com', email, text)
+        # except:
+        #     flash("Invalid email")
+        #     return jsonify(success=False, error="email")
+        #
+        # server.quit()
+
+        return redirect(url_for('index'))
+        # return jsonify(success=True, data=newUser.serialize) # JSON object
+    else:
+        # print(request.args['nameinput'])
+        # print(request.args['emailinput'])
+        # print(request.args['passinput'])
+        return render_template('signup.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
 def view_profile(user):
     if request.method == "POST":
         userID = request.form['user_id']
-        
+
         # If the userID becomes invalid, push to a 404 page
         # Else
-        
+
         return render_template('base.html', uID=userID)
 
 # @app.route('/<user>/profile', methods=['GET', 'POST'])
