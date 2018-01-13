@@ -54,7 +54,7 @@ class Transactions(Base):
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True)
-    accepted = Column(Boolean)
+    accepted_status = Column(Boolean)
 
     requester = Column(Integer, ForeignKey('user.id'))
     client = Column(Integer, ForeignKey('user.id'))
