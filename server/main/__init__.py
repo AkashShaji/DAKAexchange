@@ -189,7 +189,7 @@ def signup():
         #
         # server.quit()
 
-        return redirect(url_for('login'))
+        return redirect(url_for('view_profile'))
     else:
         return render_template('signup.html')
 
