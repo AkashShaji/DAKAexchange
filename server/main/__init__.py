@@ -157,8 +157,6 @@ def signup():
             flash("Passwords don't match")
             return redirect(url_for('signup'))
 
-        flash("New user nigga")
-
         newUser = User(name=user, email=email)
         newUser.hash_password(password)
 
