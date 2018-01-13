@@ -101,6 +101,12 @@ def login():
 def logout():
     return url_for(index)
 
+@app.route('/profile', methods=['GET', 'POST'])
+def view_profile(user):
+    if request.method == "POST":
+        userID = request.form['user_id']
+        
+
 @app.route('/<user>/profile', methods=['GET', 'POST'])
 def view_profile(user):
     return "This is where users can view their profile"
