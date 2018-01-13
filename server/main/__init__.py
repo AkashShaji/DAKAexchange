@@ -109,7 +109,7 @@ def login():
             login_user(potential_user, force=True)
             potential_user.is_authenticated = True
 
-            return redirect(url_for('view_profile'))
+            return redirect(url_for('view_profile', user_id=potential_user.id))
         else:
             flash("Wrong username or password")
             redirect(url_for('login'))
@@ -138,10 +138,10 @@ def signup():
         # confirm_code = generate_code()
 
         # check if user already exists
-        if session.query(User).filter(email == email).count() > 0:
+        if session.query(User).filter(User.email == email).count() > 0:
             flash("User already exists. Please login")
             return redirect(url_for('login'))
-            # return jsonify(success=False, error="exists")
+
         elif password != confirm:
             flash("Passwords don't match")
             return redirect(url_for('signup'))
@@ -185,7 +185,7 @@ def signup():
         #
         # server.quit()
 
-        return redirect(url_for('/login'))
+        return redirect(url_for('login'))
     else:
         return render_template('signup.html')
 

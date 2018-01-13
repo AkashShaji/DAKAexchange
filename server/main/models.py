@@ -49,6 +49,7 @@ class User (Base):
             'swipe_price': self.swipe_price
         }
 
+
 class Transactions(Base):
     __tablename__ = "transactions"
 
