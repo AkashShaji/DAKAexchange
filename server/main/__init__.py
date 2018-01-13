@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
-import random, string
+import random, string, urllib3, json, codecs
 
 import flask_login
 from flask_login import LoginManager, login_user
@@ -35,6 +35,9 @@ login_manager.login_view = 'login'
 app.secret_key = "userloginapplication"
 app.debug = True
 
+http = urllib3.PoolManager()
+reader = codecs.getreader('utf-8')
+
 # server = smtplib.SMTP('smtp.gmail.com', 587)
 
 # ================= BEGIN LOGIN REQUIREMENT CODE ==============
@@ -59,12 +62,21 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
-@app.route('/menu')
+@app.route('/menu', methods=['GET', 'POST'])
 def menu():
     # REQUEST URL:
     # https://www.dineoncampus.com/v1/location/menu.json?date=2018-01-13T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294
     # mess with the 'date' parameter to get menu for specific days
-    return render_template('menu.html')
+    breakfast_items = []
+    lunch_items = []
+    dinner_items = []
+
+    if request.method == 'POST':
+        pass
+    else:
+        response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date=2018-01-13T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
+        return response['status']
+        # return render_template('menu.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
