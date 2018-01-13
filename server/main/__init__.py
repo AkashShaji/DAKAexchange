@@ -160,3 +160,7 @@ def user_searched(selected_user):
 @app.route("/search/<selected_user>/request", methods=['GET', 'POST'])
 def request_user(selected_user):
     return "This is where users can request another user to sell to/buy from"
+
+@app.route("/buy", methods=['GET','POST'])
+def buy():
+    return render_template("buy.html")
