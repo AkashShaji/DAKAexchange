@@ -50,5 +50,17 @@ class User (Base):
             'swipe_price': self.swipe_price
         }
 
+class Transactions(Base):
+    __tablename__ = "transactions"
+
+    id = Column(Integer, primary_key=True)
+    requester = Column(Integer, ForeignKey('user.id'))
+    client = Column(Integer, ForeignKey('user.id'))
+    seller = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    accepted = Column(Boolean)
+
+
+
 engine = create_engine('sqlite:///site.db')
 Base.metadata.create_all(engine)
