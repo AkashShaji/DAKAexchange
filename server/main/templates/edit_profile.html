@@ -6,17 +6,17 @@
 <form action="{{ url_for('edit_profile', user_id=user_id) }}" method="post" enctype="multipart/form-data">
   <div class="row form-group">
     <div class="col-md-4">
-      <label for="new_name">Name</label>
+      <label for="new_name">Name</label><br>
       <input type="text" name="new_name">
     </div>
 
     <div class="col-md-4">
-      <label for="new_email">Email</label>
+      <label for="new_email">Email</label><br>
       <input type="email" name="new_email">
     </div>
 
     <div class="col-md-4">
-      <label for="new_pic">Profile Picture</label>
+      <label for="new_pic">Profile Picture</label><br>
       <input type="file" name="new_pic">
     </div>
   </div>
@@ -25,17 +25,18 @@
     <div class="col-md-4">
       <label for="new_start">Start time</label>
       <input type="time" name="new_start">
+      <br>
       <label for="new_end">End Time</label>
       <input type="time" name="new_end">
     </div>
 
     <div class="col-md-4">
-      <label for="new_swipes">Number of Available Swipes</label>
+      <label for="new_swipes">Number of Available Swipes</label><br>
       <input type="number" name="new_swipes">
     </div>
 
     <div class="col-md-4">
-      <label for="new_price">Price of Swipes</label>
+      <label for="new_price">Price of Swipes</label><br>
       <input type="number" name="new_price">
     </div>
   </div>
