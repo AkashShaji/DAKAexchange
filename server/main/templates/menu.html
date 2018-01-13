@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1>Menu for {{ date }}</h1>
+  <h1>
+    Menu for {{ date }}
+  </h1>
 
   <form action="{{ url_for('menu') }}" method="POST">
     <input type="date" name='date'>
-    <button type="submit">Update Menu</button>
+    <button style="background-color: #FFFFFF" type="submit">Update Menu</button>
   </form>
 
   <div class="row">
