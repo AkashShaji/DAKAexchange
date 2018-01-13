@@ -209,7 +209,20 @@ def view_profile(user_id):
 
 @app.route('/<user_id>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user_id):
-    return render_template('edit_profile.html', user_id=user_id)
+    if request.method == 'POST':
+        new_name = request.form['new_name']
+        new_email = request.form['new_email']
+        new_pic = request.files['new_pic']
+
+        new_start = datetime.datetime.strptime(request.form['new_start'], '%H:%M')
+        new_end = datetime.datetime.strptime(request.form['new_end'], '%H:%M')
+
+        new_swipes = request.form['new_swipes']
+        new_price = request.form['new_price']
+
+        if request.form['new_name'] !=
+    else:
+        return render_template('edit_profile.html', user_id=user_id)
 
 
 @app.route('/<user>/requests_sent', methods=['GET', 'POST'])

@@ -22,8 +22,8 @@ class User (Base):
     is_authenticated = Column(Boolean)
     is_active = Column(Boolean)
 
-    start_time = Column(String(50))
-    end_time = Column(String(50))
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
 
     swipe_count = Column(Integer)
     swipe_price = Column(Float)
