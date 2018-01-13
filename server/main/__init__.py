@@ -49,3 +49,8 @@ def load_user(user_id):
     return user
 
 # ================== END LOGIN REQUIREMENT CODE ===============
+
+@app.route('/')
+@app.route('/index')
+def index():
+    return "This is a test"
