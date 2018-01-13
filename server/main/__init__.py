@@ -46,9 +46,9 @@ def load_user(user_id):
     object to be used by the login_manager
     '''
     try:
-        user = session.query(Seller).filter_by(id=int(id)).first()
+        user = session.query(Seller).filter_by(id=int(user_id)).first()
     except:
-        user = session.query(Client).filter_by(id=int(id)).first()
+        user = session.query(Client).filter_by(id=int(user_id)).first()
 
     return user
 
