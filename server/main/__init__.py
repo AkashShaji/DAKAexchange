@@ -59,6 +59,13 @@ def load_user(user_id):
 def index():
     return "This is a test"
 
+@app.route('/menu')
+def menu():
+    # REQUEST URL:
+    # https://www.dineoncampus.com/v1/location/menu.json?date=2018-01-13T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294
+    # mess with the 'date' parameter to get menu for specific days
+    return "This is where the menu at the POD for a specified day will be displayed"
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     return "This is where users will signup"
