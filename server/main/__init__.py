@@ -21,7 +21,7 @@ from flask_login import LoginManager, login_user
 
 #===================== INIT CODE ============================
 
-engine = create_engine('postgresql://localhost:8000/site.db')
+engine = create_engine('sqlite:///site.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
