@@ -67,7 +67,7 @@ def menu():
     # REQUEST URL:
     # https://www.dineoncampus.com/v1/location/menu.json?date=2018-01-13T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294
     # mess with the 'date' parameter to get menu for specific days
-    items = {}
+    items = []
 
     if request.method == 'POST':
         pass
@@ -75,13 +75,15 @@ def menu():
         current_date = datetime.date.today()
         response = json.loads(http.request('GET', 'https://www.dineoncampus.com/v1/location/menu.json?date='+str(current_date.year) + '-' + str(current_date.month) + '-' + str(current_date.day) +'T03:00:59.764Z&location_id=5877ad223191a20074d827dc&platform=0&site_id=5751fd2b90975b60e0489294').data)
 
-        for period in response['menu']['periods']:
-            items[period] = []
+        for period in response['menu']['periods'][0:-1]:
+            period_items = []
             for food_type in period['categories']:
-                items[period] += [(food_type, food["name"]) for food in food_type['items']]
+                period_items.append([(food_type['name'] + " - " + food["name"]) for food in food_type['items']])
+
+            items.append(period_items)
 
         # return response['status']
-        return render_template('menu.html', items=items)
+        return render_template('menu.html', breakfast=items[0], lunch=items[1], dinner=items[2], late_night=items[3])
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():

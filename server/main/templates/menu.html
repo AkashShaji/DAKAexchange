@@ -1,8 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Menu</h1>
+  <h1>Menu</h1>
 
+  <div class="row">
+      <div class="col-md-3">
+        <h3>Breakfast</h3>
 
+        <ul>
+          {% for cat in breakfast %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col-md-3">
+        <h3>Lunch</h3>
+
+        <ul>
+          {% for cat in lunch %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col-md-3">
+        <h3>Dinner</h3>
+
+        <ul>
+          {% for cat in dinner %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col-md-3">
+        <h3>Late Night</h3>
+
+        <ul>
+          {% for cat in late_night %}
+            {% for food in cat %}
+              <li>{{ food }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+  </div>
 
 {% endblock %}
