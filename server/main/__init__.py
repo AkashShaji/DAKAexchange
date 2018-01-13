@@ -54,3 +54,31 @@ def load_user(user_id):
 @app.route('/index')
 def index():
     return "This is a test"
+
+@app.route('/signup')
+def signup():
+    return "This is where users will signup"
+
+@app.route('/login')
+def login():
+    return "This is where users will login"
+
+@app.route('/logout')
+def logout():
+    return url_for(index)
+
+@app.route('/<user>/profile')
+def view_profile(user):
+    return "This is where users can view their profile"
+
+@app.route('/<user>/profile/edit')
+def edit_profile(user):
+    return "This is where users can edit their profile"
+
+@app.route("/clientsearch")
+def client_search():
+    return "This is where search results for available clients will appear"
+
+@app.route("/sellersearch")
+def seller_search():
+    return "This is where search results for available sellers will appear"
