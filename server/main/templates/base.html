@@ -13,6 +13,12 @@
     <script type=text/javascript>
       $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
+
+    {% if uID %}
+        <script type="text/javascript">
+            $USER_ID = {{ uID }};
+        </script>
+    {% endif %}
   </head>
 
   <body>

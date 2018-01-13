@@ -106,6 +106,10 @@ def view_profile(user):
     if request.method == "POST":
         userID = request.form['user_id']
         
+        # If the userID becomes invalid, push to a 404 page
+        # Else
+        
+        return render_template('base.html', uID=userID)
 
 @app.route('/<user>/profile', methods=['GET', 'POST'])
 def view_profile(user):
