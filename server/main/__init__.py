@@ -204,7 +204,8 @@ def signup():
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
     is_seller = session.query(Transactions).filter_by(seller=user).all()
-    is_involved = session.query(Transactions).filter_by(seller=user, client=user).order_by(accepted_status).all()
+    is_involved = session.query(Transactions).filter(Transactions.seller == user, Transactions.client != None).all()
+    is_involved += session.query(Transactions).filter(Transactions.client == user).all()
 
     try:
         stime = user.start_time.strftime("%I:%M %p")
