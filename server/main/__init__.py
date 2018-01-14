@@ -360,7 +360,8 @@ def buy():
 
         for seller in sellers_raw:
             if seller.start_time != None and seller.end_time != None and seller.start_time.time() <= time.time() and seller.end_time.time() >= time.time():
-                sellers.append(seller)
+                if seller.id != flask_login.current_user.id:
+                    sellers.append(seller)
 
         sellers_data = []
 
@@ -380,8 +381,13 @@ def buy():
 
         return render_template("buy.html", sellers=[], time=time)
 
+
 @app.route("/getOpenTransactions")
 def getOpenTransactions():
+
+    if not isinstance(flask_login.current_user, User):
+        return jsonify(result=[])
+
     transactions = session.query(Transactions).filter(and_(Transactions.seller == flask_login.current_user.id, Transactions.notified_status == False)).all()
     notifications = []
 
