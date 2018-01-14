@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_
 from functools import wraps
 
-from server.main.models import Base, User, Transactions
+from main.models import Base, User, Transactions
 import random, string, urllib3, json, codecs, datetime, os
 
 import flask_login
@@ -204,6 +204,10 @@ def signup():
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
+    is_seller = session.query(Transactions).filter_by(seller=user).all()
+    is_involved = session.query(Transactions).filter(Transactions.seller == user, Transactions.client != None).all()
+    is_involved += session.query(Transactions).filter(Transactions.client == user).all()
+
     try:
         stime = user.start_time.strftime("%I:%M %p")
     except:
@@ -214,7 +218,7 @@ def view_profile(user_id):
     except:
         etime = None
 
-    return render_template('profile.html', user=user, stime=stime, etime=etime) #, image=user.profile_pic
+    return render_template('profile.html', user=user, stime=stime, etime=etime, seller=is_seller, involved=is_involved) #, image=user.profile_pic
 
 # def allowed_file(filename):
 #     return '.' in filename and \
@@ -295,17 +299,35 @@ def change_password(user_id):
 
         return redirect(url_for('view_profile', user_id=user_id))
 
-@app.route('/<user>/requests_sent', methods=['GET', 'POST'])
-def view_sent_requests(user):
-    user_requests = session.query(Transactions).filter_by(client=user).all()
-    return "This is where a user can see the requests they've sent to other users"
+@app.route('/<transaction_id>/accept_request', methods=['GET'])
+def accept_request(transaction_id):
+    transaction = session.query(Transactions).filter_by(id=transaction_id).first()
+    transaction.accepted_status = True
+
+    session.add(transaction)
+    session.commit()
+
+    return redirect(url_for('index'))
 
 
-@app.route('/<user>/requests_received', methods=['GET', 'POST'])
-def view_received_requests(user):
-    user_requests = session.query(Transactions).filter_by(seller=user).all()
-    return "This is where a user can see the requests they've received from other users"
+@app.route('/<transaction_id>/redeem_swipe', methods=['GET'])
+def redeem_swipe(transaction_id):
+    transaction = session.query(Transactions).filter_by(id=transaction_id).first()
+    transaction.swipe_redeemed = True
 
+    session.delete(transaction)
+    session.commit()
+
+    return redirect(url_for('index'))
+
+@app.route('/<transaction_id>/cancel_transaction', methods=['GET'])
+def cancel_transaction(transaction_id):
+    transaction = session.query(Transactions).filter_by(id=transaction_id).first()
+
+    session.delete(transaction)
+    session.commit()
+
+    return redirect(url_for('index'))
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
@@ -377,3 +399,4 @@ def get_buyer_name(buyer_id):
 
 def notify(s):
     requests.post("https://maker.ifttt.com/trigger/daka_exchange/with/key/ct6p6W_232bEKEdkipWB90", data={'value1': s})
+

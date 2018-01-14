@@ -32,32 +32,49 @@
         ${{ user.swipe_price}}
     </div>
 
-    <span id="transcations"></span>
+    <!-- <span id="transcations"></span>
 
-{#    <script type="text/javascript">#}
-{#        $(document).ready(function() {#}
-{#            $.getJSON($SCRIPT_ROOT + "/getTransactions", {#}
-{#                userID: user_id#}
-{#            }, function (data) {#}
-{#                var transactions = '';#}
-{#                if(data.length === 0) {#}
-{#                    transactions = "<div class='col'>" +#}
-{#                        "<div class='text-center'>No transactions available!</div>" +#}
-{#                        "</div>"#}
-{#                }#}
-{#                else {#}
-{#                    for(var i = 0; i < data.length; i++) {#}
-{#                        transactions += "<div class='row'>" +#}
-{#                            "<div class='col-4'>" + data[i][0] + "</div>" +#}
-{#                            "<div class='col-4'> a swipe for </div> " +#}
-{#                            "<div class='col-4'>" + data[i][1] + "</div></div>" +#}
-{#                            "<div class='w-100'></div> ";#}
-{#                    }#}
-{#                }#}
-{#                $('#transcations').html(transactions);#}
-{#            });#}
-{#        });#}
-{#    </script>#}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.getJSON($SCRIPT_ROOT + "/getTransactions", {
+                userID: $USER_ID
+            }, function (data) {
+                var transactions = '';
+                if(data.length === 0) {
+                    transactions = "<div class='col'>" +
+                        "<div class='text-center'>No transactions available!</div>" +
+                        "</div>"
+                }
+                else {
+                    for(var i = 0; i < data.length; i++) {
+                        transactions += "<div class='row'>" +
+                            "<div class='col-4'>" + data[i][0] + "</div>" +
+                            "<div class='col-4'> a swipe for </div> " +
+                            "<div class='col-4'>" + data[i][1] + "</div></div>" +
+                            "<div class='w-100'></div> ";
+                    }
+                }
+                $('#transcations').html(transactions);
+            });
+        });
+    </script> -->
+</div>
+
+<div class="row trans_history">
+  <div class="col-lg-6">
+    <h3>Outgoing Requests</h3>
+    {% for transaction in seller %}
+      {% include "_transaction.html" %}
+    {% endfor %}
+  </div>
+
+  <div class="col-lg-6">
+    <h3>Current Transactions</h3>
+    {% for transaction in seller %}
+      {% include "_transaction.html" %}
+    {% endfor %}
+  </div>
+
 </div>
 
 
