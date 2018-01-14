@@ -371,6 +371,7 @@ def buy():
             data.append("Profile Picture")
             data.append(seller.name)
             data.append(seller.swipe_price)
+            data.append(seller.id)
 
             sellers_data.append(data)
 
@@ -406,3 +407,6 @@ def get_buyer_name(buyer_id):
 def notify(s):
     requests.post("https://maker.ifttt.com/trigger/daka_exchange/with/key/ct6p6W_232bEKEdkipWB90", data={'value1': s})
 
+
+@app.route("/<buyer_id>/<seller_id>/createTransaction", methods=['GET', 'POST'])
+def createTransaction(buyer_id, seller_id):
