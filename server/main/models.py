@@ -56,6 +56,7 @@ class Transactions(Base):
 
     id = Column(Integer, primary_key=True)
     accepted_status = Column(Boolean)
+    swipe_redeemed = Column(Boolean)
 
     client = Column(Integer, ForeignKey('users.id'))
     users = relationship(User, foreign_keys=[client])
