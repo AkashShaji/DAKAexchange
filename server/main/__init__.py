@@ -203,8 +203,8 @@ def signup():
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
-    is_seller = session.query(Transactions).filter_by(seller=user_id).all()
-    is_involved = session.query(Transactions).filter_by(seller=user_id, client=user_id).order_by(accepted_status).all()
+    is_seller = session.query(Transactions).filter_by(seller=user).all()
+    is_involved = session.query(Transactions).filter_by(seller=user, client=user).order_by(accepted_status).all()
 
     try:
         stime = user.start_time.strftime("%I:%M %p")
@@ -297,16 +297,20 @@ def change_password(user_id):
 
         return redirect(url_for('view_profile', user_id=user_id))
 
-@app.route('/<user>/requests_sent', methods=['GET', 'POST'])
-def view_sent_requests(user):
+@app.route('/<transaction_id>/accept_request', methods=['GET'])
+def accept_request(transaction_id):
     user_requests = session.query(Transactions).filter_by(client=user).all()
     return "This is where a user can see the requests they've sent to other users"
 
 
-@app.route('/<user>/requests_received', methods=['GET', 'POST'])
-def view_received_requests(user):
+@app.route('/<transaction_id>/redeem_swipe', methods=['GET'])
+def redeem_swipe(transaction_id):
     user_requests = session.query(Transactions).filter_by(seller=user).all()
     return "This is where a user can see the requests they've received from other users"
+
+@app.route('/<transaction_id>/cancel_transaction', methods=['GET'])
+def cancel_transaction(transaction_id):
+    pass
 
 
 @app.route("/search", methods=['GET', 'POST'])

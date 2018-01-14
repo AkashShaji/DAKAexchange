@@ -26,12 +26,12 @@
         <div class="col-md-6">
           {% if current_user == transaction.seller and not transaction.accepted_status %}
             <p>
-              <a href="{{ url_for('accept_request') }}"><button type="button" class="btn btn-primary">Accept</button></a>
+              <a href="{{ url_for('accept_request', transaction_id=transaction.id) }}"><button type="button" class="btn btn-primary">Accept</button></a>
               {{ transation.client.name }} has requested one of your swipes!
             </p>
           {% else if current_user == transaction.client and transaction.accepted_status and not transaction.swipe_redeemed %}
             <p>
-              <a href="{{ url_for('redeem_swipe') }}"><button type="button" class="btn btn-success"></button></a>
+              <a href="{{ url_for('redeem_swipe', transaction_id=transaction.id) }}"><button type="button" class="btn btn-success">Redeem</button></a>
               {{ transaction.seller.name }} has accepted your request! Click 'redeem' when you receive your swipe!
             </p>
           {% endif %}
