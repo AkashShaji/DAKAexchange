@@ -38,7 +38,7 @@
         </div>
 
         <div class="col-md-6">
-          {% if current_user.id == transaction.seller.id or current_user == transaction.client %}
+          {% if current_user.id == transaction.seller.id or current_user.id == transaction.client.id %}
             <a href="{{ url_for('cancel_transaction', transaction_id=transaction.id) }}"><button type="button" class="btn btn-default">Cancel Transaction</button></a>
           {% endif %}
         </div>

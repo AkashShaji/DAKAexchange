@@ -220,6 +220,7 @@ def view_profile(user_id):
 
     print(len(is_seller))
     print(len(is_involved))
+    print(user.id)
 
     return render_template('profile.html', user=user, stime=stime, etime=etime, seller=is_seller, involved=is_involved) #, image=user.profile_pic
 
@@ -414,9 +415,9 @@ def createTransaction(buyer_id, seller_id):
 
     new_transaction = Transactions(seller=seller, client=client)
 
-    notify(seller.name + " would like to buy a swipe from you!")
-
     session.add(new_transaction)
     session.commit()
+
+    notify(seller.name + " would like to buy a swipe from you!")
 
     return redirect(url_for('view_profile', user_id=buyer_id))
