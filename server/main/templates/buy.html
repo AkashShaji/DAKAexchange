@@ -51,13 +51,12 @@
         </div>
     </div>
 {% else %}
-    <table class="table table-striped" id="swipesTable">
+    <table class="table table-striped align-content-center text-center" id="swipesTable" width="70%">
         <tbody>
             {% for seller in sellers %}
                 <tr>
-                    <td>{{ seller[0] }}</td>
                     <td>{{ seller[1] }}</td>
-                    <td>{{ seller[2] }}</td>
+                    <td>${{ seller[2] }}</td>
                     <td>Swipe me in!</td>
                 </tr>
             {% endfor %}
