@@ -17,7 +17,7 @@ class User (Base):
     email = Column(String(200))
     class_year = Column(String(50))
     password_hash = Column(String(300))
-    profile_pic = Column(String(300)) # stores filepath to image in filesystem
+    # profile_pic = Column(String(300)) # stores filepath to image in filesystem
 
     is_authenticated = Column(Boolean)
     is_active = Column(Boolean)

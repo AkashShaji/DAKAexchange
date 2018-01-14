@@ -192,17 +192,17 @@ def signup():
     else:
         return render_template('signup.html')
 
-def get_profile_image(user):
-    return send_from_directory(UPLOAD_FOLDER, user.profile_pic)
+# def get_profile_image(user):
+#     return send_from_directory(UPLOAD_FOLDER, user.profile_pic)
 
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
-    return render_template('profile.html', user=user, image=user.profile_pic)
+    return render_template('profile.html', user=user) #, image=user.profile_pic
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/<user_id>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user_id):
@@ -234,24 +234,24 @@ def edit_profile(user_id):
             new_swipes = user.swipe_count
         if not request.form['new_price']:
             new_price = user.swipe_price
-        if 'new_pic' not in request.files:
-            new_pic = user.profile_pic
-        else:
-            file_in = request.files['new_pic']
-            if file_in.filename == "" or not allowed_file(file_in.filename):
-                new_pic = user.profile_pic
-            else:
-                filename = secure_filename(file_in.filename)
-                new_pic = os.path.join(UPLOAD_FOLDER, filename)
-                file_in.save(new_pic)
+        # if 'new_pic' not in request.files:
+        #     new_pic = user.profile_pic
+        # else:
+        #     file_in = request.files['new_pic']
+        #     if file_in.filename == "" or not allowed_file(file_in.filename):
+        #         new_pic = user.profile_pic
+        #     else:
+        #         filename = secure_filename(file_in.filename)
+        #         new_pic = os.path.join(UPLOAD_FOLDER, filename)
+        #         file_in.save(new_pic)
 
         user.name = new_name
         user.email = new_email
-        user.profile_pic = new_pic
+        # user.profile_pic = new_pic
         user.start_time = new_start
         user.end_time = new_end
         user.swipe_count = new_swipes
-        user.swipe_price = float(new_price)
+        user.swipe_price = new_price
 
         session.add(user)
         session.commit()
