@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Date, Float, ForeignKey, ForeignKeyConstraint, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey, ForeignKeyConstraint
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
@@ -17,12 +17,13 @@ class User (Base):
     email = Column(String(200))
     class_year = Column(String(50))
     password_hash = Column(String(300))
+    # profile_pic = Column(String(300)) # stores filepath to image in filesystem
 
     is_authenticated = Column(Boolean)
     is_active = Column(Boolean)
 
-    start_time = Column(DateTime())
-    end_time = Column(DateTime())
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
 
     swipe_count = Column(Integer)
     swipe_price = Column(Float)
@@ -61,7 +62,7 @@ class Transactions(Base):
     seller = Column(Integer, ForeignKey('users.id'))
     users = relationship(User, foreign_keys=[seller])
 
-    meet_time = Column(Date)
+    meet_time = Column(DateTime)
 
     def get_id(self):
         return str(self.id)
