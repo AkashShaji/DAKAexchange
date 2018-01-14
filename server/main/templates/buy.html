@@ -57,7 +57,13 @@
                 <tr>
                     <td>{{ seller[1] }}</td>
                     <td>${{ seller[2] }}</td>
-                    <td>Swipe me in!</td>
+                    {%  if not current_user.is_authenticated %}
+                        <td><a href="{{ url_for('login') }}">Login</a> to buy this swipe!</td>
+                    {% else %}
+                        <td><a href="{{ url_for('createTransaction',
+                                        buyer_id=current_user.id,
+                                        seller_id=seller[3]) }}" >Swipe me in!</a></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
