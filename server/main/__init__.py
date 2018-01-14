@@ -410,3 +410,11 @@ def notify(s):
 
 @app.route("/<buyer_id>/<seller_id>/createTransaction", methods=['GET', 'POST'])
 def createTransaction(buyer_id, seller_id):
+    seller = session.query(User).filter_by(id=seller_id).first()
+    client = session.query(User).filter_by(id=buyer_id).first()
+
+    new_transaction = Transactions(seller=seller, client=client)
+    session.add(new_transaction)
+    session.commit()
+
+    return redirect(url_for('view_profile', user_id=buyer_id))

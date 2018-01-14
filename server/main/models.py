@@ -61,9 +61,9 @@ class Transactions(Base):
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True)
-    accepted_status = Column(Boolean)
-    swipe_redeemed = Column(Boolean)
-    notified_status = Column(Boolean)
+    accepted_status = Column(Boolean, default=False)
+    swipe_redeemed = Column(Boolean, default=False)
+    notified_status = Column(Boolean, default=False)
 
     client = Column(PickleType)
     seller = Column(PickleType)
