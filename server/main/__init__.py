@@ -198,7 +198,17 @@ def signup():
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
-    return render_template('profile.html', user=user) #, image=user.profile_pic
+    try:
+        stime = user.start_time.strftime("%I:%M %p")
+    except:
+        stime = None
+
+    try:
+        etime = user.end_time.strftime("%I:%M %p")
+    except:
+        etime = None
+
+    return render_template('profile.html', user=user, stime=stime, etime=etime) #, image=user.profile_pic
 
 # def allowed_file(filename):
 #     return '.' in filename and \
@@ -224,11 +234,13 @@ def edit_profile(user_id):
         if request.form['new_start'] == "":
             new_start = user.start_time
         else:
-            new_start = datetime.datetime.strptime(request.form['new_start'], '%H:%M')
+            stime_str = request.form['new_start']
+            new_start = datetime.datetime.strptime(stime_str, '%H:%M')
         if request.form['new_end'] == "":
             new_end = user.end_time
         else:
-            new_end = datetime.datetime.strptime(request.form['new_end'], '%H:%M')
+            etime_str = request.form['new_end']
+            new_end = datetime.datetime.strptime(etime_str, '%H:%M')
 
         if not request.form['new_swipes']:
             new_swipes = user.swipe_count
@@ -256,7 +268,7 @@ def edit_profile(user_id):
         session.add(user)
         session.commit()
 
-        return redirect(url_for('view_profile', user_id=user_id))
+        return redirect(url_for('view_profile', user_id=user_id, stime=new_start.strftime("%I:%M %p"), etime=new_end.strftime("%I:%M %p")))
     else:
         return render_template('edit_profile.html', user_id=user_id)
 
