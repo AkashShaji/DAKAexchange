@@ -19,18 +19,6 @@
             $USER_ID = {{ uID }};
         </script>
     {% endif %}
-
-    <script>
-        $(document).ready(function () {
-            setInterval(function () {
-                $.getJSON($SCRIPT_ROOT + "/getOpenTransactions", {}, function (data) {
-                    for(var i = 0; i < data.result.length; i++) {
-                        alert(data.result[i])
-                    }
-                });
-            }, 5000);
-        });
-    </script>
   </head>
 
   <body>

@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, jsonify, request, g, make_response, send_from_directory
 from flask import url_for, redirect, flash, render_template
 
@@ -342,6 +343,26 @@ def buy():
         return render_template("buy.html", sellers=[], time=timeRaw)
     else:
         current_time = datetime.datetime.now()
-        time = str(current_time.hour) + ":" + str(current_time.minute)
+        time = current_time.strftime("%H:%M")
+
         return render_template("buy.html", sellers=[], time=time)
 
+@app.route("/getOpenTransactions")
+def getOpenTransactions():
+    transactions = session.query(Transactions).filter(and_(Transactions.seller == flask_login.current_user.id, Transactions.notified_status == False)).all()
+    notifications = []
+
+    for transaction in transactions:
+        transaction.notified_status = True
+        notifications.append(get_buyer_name(transaction.client) + " would like to buy a swipe from you!")
+        notify(get_buyer_name(transaction.client) + " would like to buy a swipe from you!")
+
+    return jsonify(result=notifications)
+
+
+def get_buyer_name(buyer_id):
+    return session.query(User).filter(User.id == buyer_id).first().name
+
+
+def notify(s):
+    requests.post("https://maker.ifttt.com/trigger/daka_exchange/with/key/ct6p6W_232bEKEdkipWB90", data={'value1': s})
