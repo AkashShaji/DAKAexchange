@@ -324,11 +324,22 @@ def request_user(selected_user):
 
 @app.route("/buy", methods=['GET', 'POST'])
 def buy():
+    def time_to_int(time):
+        strRep = time.strftime("%H%M")
+        return int(strRep)
+
     if request.method == "POST":
         timeRaw = request.form['timeSearch']
         time = datetime.datetime.strptime(timeRaw, '%H:%M')
+        # time = int(time.strftime('%H%M'))
 
-        sellers = session.query(User).filter(and_(User.start_time.time() <= time.time(), User.end_time.time() >= time.time())).all()
+        sellers_raw = session.query(User).all()
+        sellers = []
+
+        for seller in sellers_raw:
+            if seller.start_time != None and seller.end_time != None and seller.start_time.time() <= time.time() and seller.end_time.time() >= time.time():
+                sellers.append(seller)
+
         sellers_data = []
 
         for seller in sellers:
@@ -340,7 +351,7 @@ def buy():
 
             sellers_data.append(data)
 
-        return render_template("buy.html", sellers=[], time=timeRaw)
+        return render_template("buy.html", sellers=sellers_data, time=timeRaw)
     else:
         current_time = datetime.datetime.now()
         time = current_time.strftime("%H:%M")
