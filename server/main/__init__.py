@@ -203,6 +203,9 @@ def signup():
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
+    is_seller = session.query(Transactions).filter_by(seller=user_id).all()
+    is_involved = session.query(Transactions).filter_by(seller=user_id, client=user_id).order_by(accepted_status).all()
+
     try:
         stime = user.start_time.strftime("%I:%M %p")
     except:
@@ -213,7 +216,7 @@ def view_profile(user_id):
     except:
         etime = None
 
-    return render_template('profile.html', user=user, stime=stime, etime=etime) #, image=user.profile_pic
+    return render_template('profile.html', user=user, stime=stime, etime=etime, seller=is_seller, involved=is_involved) #, image=user.profile_pic
 
 # def allowed_file(filename):
 #     return '.' in filename and \
@@ -344,4 +347,3 @@ def buy():
         current_time = datetime.datetime.now()
         time = str(current_time.hour) + ":" + str(current_time.minute)
         return render_template("buy.html", sellers=[], time=time)
-

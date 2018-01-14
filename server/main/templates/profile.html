@@ -63,10 +63,16 @@
 <div class="row trans_history">
   <div class="col-lg-6">
     <h3>Outgoing Requests</h3>
+    {% for transaction in seller %}
+      {% include "_transaction.html" %}
+    {% endfor %}
   </div>
 
   <div class="col-lg-6">
     <h3>Current Transactions</h3>
+    {% for transaction in seller %}
+      {% include "_transaction.html" %}
+    {% endfor %}
   </div>
 </div>
 
