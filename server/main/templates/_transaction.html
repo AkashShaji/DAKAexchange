@@ -14,18 +14,35 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-6"><p>Client: {{ transaction.client.name }}</p></div>
-      <div class="col-md-6"><p>{{ transaction.client.email }}</p></div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-6">
-
+    {% if transaction.client %}
+      <div class="row">
+        <div class="col-md-6"><p>Client: {{ transaction.client.name }}</p></div>
+        <div class="col-md-6"><p>{{ transaction.client.email }}</p></div>
       </div>
-      <div class="col-md-6">
+    {% endif %}
 
+    {% if current_user.is_authenticated %}
+      <div class="row">
+        <div class="col-md-6">
+          {% if current_user == transaction.seller and not transaction.accepted_status %}
+            <p>
+              <a href="{{ url_for('accept_request') }}"><button type="button" class="btn btn-primary">Accept</button></a>
+              {{ transation.client.name }} has requested one of your swipes!
+            </p>
+          {% else if current_user == transaction.client and transaction.accepted_status and not transaction.swipe_redeemed %}
+            <p>
+              <a href="{{ url_for('redeem_swipe') }}"><button type="button" class="btn btn-success"></button></a>
+              {{ transaction.seller.name }} has accepted your request! Click 'redeem' when you receive your swipe!
+            </p>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          {% if current_user == transaction.seller or current_user == transaction.client %}
+            <a href="{{ url_for('cancel_transaction', transaction_id=transaction.id) }}"><button type="button" class="btn btn-default">Cancel Transaction</button></a>
+          {% endif %}
+        </div>
       </div>
-    </div>
+    {% endif %}
   </div>
 </div>

@@ -63,6 +63,7 @@ class Transactions(Base):
     id = Column(Integer, primary_key=True)
     accepted_status = Column(Boolean)
     swipe_redeemed = Column(Boolean)
+    notified_status = Column(Boolean)
 
     client = Column(PickleType)
     seller = Column(PickleType)
