@@ -310,6 +310,7 @@ def accept_request(transaction_id):
     session.add(transaction)
     session.commit()
 
+    flash("Request accepted")
     return redirect(url_for('index'))
 
 
@@ -321,6 +322,7 @@ def redeem_swipe(transaction_id):
     session.delete(transaction)
     session.commit()
 
+    flash("Swipe redeemed")
     return redirect(url_for('index'))
 
 @app.route('/<transaction_id>/cancel_transaction', methods=['GET'])
@@ -330,22 +332,8 @@ def cancel_transaction(transaction_id):
     session.delete(transaction)
     session.commit()
 
+    flash("Transaction successfully canceled")
     return redirect(url_for('index'))
-
-@app.route("/search", methods=['GET', 'POST'])
-def search():
-    return "This is where search results will appear"
-
-
-@app.route("/search/<selected_user>", methods=['GET', 'POST'])
-def user_searched(selected_user):
-    return "This is where information about the user clicked on from searching will appear"
-
-
-@app.route("/search/<selected_user>/request", methods=['GET', 'POST'])
-def request_user(selected_user):
-    return "This is where users can request another user to sell to/buy from"
-
 
 @app.route("/buy", methods=['GET', 'POST'])
 def buy():
