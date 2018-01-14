@@ -62,7 +62,8 @@
                     {% else %}
                         <td><a href="{{ url_for('createTransaction',
                                         buyer_id=current_user.id,
-                                        seller_id=seller[3]) }}" >Swipe me in!</a></td>
+                                        seller_id=seller[3]) }}" >
+                            <button class="btn btn-success">Swipe me in!</button></a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
