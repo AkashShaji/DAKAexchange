@@ -203,10 +203,22 @@ def signup():
 
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
-    user = session.query(User).filter_by(id=user_id).first()
-    is_seller = session.query(Transactions).filter_by(seller=user).all()
+    user = session.query(User).filter(User.id == user_id).first()
+
+    is_seller = []
+    is_involved = []
+
+    is_seller_raw = session.query(Transactions).all()
+
+    for transaction in is_seller_raw:
+        if transaction.seller.id == flask_login.current_user.id:
+            is_seller.append(transaction)
+        elif transaction.client.id == flask_login.current_user.id:
+            is_involved.append(transaction)
+
+
     # is_involved = session.query(Transactions).filter(Transactions.seller == user, Transactions.client != None).all()
-    is_involved = session.query(Transactions).filter(Transactions.client == user).all()
+    # is_involved = session.query(Transactions).filter(Transactions.client == user).all()
 
     try:
         stime = user.start_time.strftime("%I:%M %p")
@@ -217,9 +229,6 @@ def view_profile(user_id):
         etime = user.end_time.strftime("%I:%M %p")
     except:
         etime = None
-
-    print(len(is_seller))
-    print(len(is_involved))
 
     return render_template('profile.html', user=user, stime=stime, etime=etime, seller=is_seller, involved=is_involved) #, image=user.profile_pic
 
@@ -409,8 +418,8 @@ def notify(s):
 
 @app.route("/<buyer_id>/<seller_id>/createTransaction", methods=['GET', 'POST'])
 def createTransaction(buyer_id, seller_id):
-    seller = session.query(User).filter_by(id=seller_id).first()
-    client = session.query(User).filter_by(id=buyer_id).first()
+    seller = session.query(User).filter(User.id == seller_id).first()
+    client = session.query(User).filter(User.id == buyer_id).first()
 
     new_transaction = Transactions(seller=seller, client=client)
 
