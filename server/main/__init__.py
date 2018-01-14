@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, g, make_response
+from flask import Flask, jsonify, request, g, make_response, send_from_directory
 from flask import url_for, redirect, flash, render_template
 
 from flask import session as login_session
@@ -8,11 +8,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from functools import wraps
 
-import random, string, urllib3, json, codecs, datetime
+import random, string, urllib3, json, codecs, datetime, os
 
 import flask_login
 from flask_login import LoginManager, login_user
 
+from werkzeug.utils import secure_filename
 # from itsdangerous import URLSafeTimedSerializer
 
 # import smtplib
@@ -37,6 +38,9 @@ app.debug = True
 
 http = urllib3.PoolManager()
 reader = codecs.getreader('utf-8')
+
+UPLOAD_FOLDER = './static/profile_images'
+ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 # server = smtplib.SMTP('smtp.gmail.com', 587)
 
@@ -188,42 +192,90 @@ def signup():
     else:
         return render_template('signup.html')
 
+def get_profile_image(user):
+    return send_from_directory(UPLOAD_FOLDER, user.profile_pic)
+
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
+    return render_template('profile.html', user=user, image=user.profile_pic)
 
-    if request.method == "POST":
-        userID = request.form['user_id']
-
-        # If the userID becomes invalid, push to a 404 page
-        # Else
-
-        return render_template('base.html', uID=userID)
-    else:
-        return render_template('profile.html', user=user)
-
-# @app.route('/<user>/profile', methods=['GET', 'POST'])
-# def view_profile(user):
-#    return "This is where users can view their profile"
-
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/<user_id>/profile/edit', methods=['GET', 'POST'])
 def edit_profile(user_id):
+    user = session.query(User).filter_by(id=user_id).first()
+
     if request.method == 'POST':
         new_name = request.form['new_name']
         new_email = request.form['new_email']
-        new_pic = request.files['new_pic']
 
-        new_start = datetime.datetime.strptime(request.form['new_start'], '%H:%M')
-        new_end = datetime.datetime.strptime(request.form['new_end'], '%H:%M')
 
         new_swipes = request.form['new_swipes']
         new_price = request.form['new_price']
 
-        if request.form['new_name'] !=
+        if request.form['new_name'] == "":
+            new_name = user.name
+        if request.form['new_email'] == "":
+            new_email = user.email
+
+        if request.form['new_start'] == "":
+            new_start = user.start_time
+        else:
+            new_start = datetime.datetime.strptime(request.form['new_start'], '%H:%M')
+        if request.form['new_end'] == "":
+            new_end = user.end_time
+        else:
+            new_end = datetime.datetime.strptime(request.form['new_end'], '%H:%M')
+
+        if not request.form['new_swipes']:
+            new_swipes = user.swipe_count
+        if not request.form['new_price']:
+            new_price = user.swipe_price
+        if 'new_pic' not in request.files:
+            new_pic = user.profile_pic
+        else:
+            file_in = request.files['new_pic']
+            if file_in.filename == "" or not allowed_file(file_in.filename):
+                new_pic = user.profile_pic
+            else:
+                filename = secure_filename(file_in.filename)
+                new_pic = os.path.join(UPLOAD_FOLDER, filename)
+                file_in.save(new_pic)
+
+        user.name = new_name
+        user.email = new_email
+        user.profile_pic = new_pic
+        user.start_time = new_start
+        user.end_time = new_end
+        user.swipe_count = new_swipes
+        user.swipe_price = float(new_price)
+
+        session.add(user)
+        session.commit()
+
+        return redirect(url_for('view_profile', user_id=user_id))
     else:
         return render_template('edit_profile.html', user_id=user_id)
 
+@app.route('/<user_id>/profile/password', methods=['POST'])
+def change_password(user_id):
+    user = session.query(User).filter_by(id=user_id).first()
+    if request.method == 'POST':
+        old_pass = request.form['old_pass']
+        new_pass = request.form['new_pass']
+        confirm_new = request.form['confirm_new']
+
+        if user.verify_password(old_pass) and new_pass == confirm_new:
+            user.hash_password(new_pass)
+            session.add(user)
+            session.commit()
+        else:
+            flash("Incorrect Credentials")
+
+        return redirect(url_for('view_profile', user_id=user_id))
 
 @app.route('/<user>/requests_sent', methods=['GET', 'POST'])
 def view_sent_requests(user):
