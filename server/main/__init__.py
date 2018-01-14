@@ -389,16 +389,24 @@ def buy():
 @app.route("/getOpenTransactions")
 def getOpenTransactions():
 
-    if not isinstance(flask_login.current_user, User):
+    try:
+        flask_login.current_user.id
+    except:
         return jsonify(result=[])
 
-    transactions = session.query(Transactions).filter(and_(Transactions.seller == flask_login.current_user.id, Transactions.notified_status == False)).all()
+#    transactions = session.query(Transactions).filter(and_(Transactions.seller == flask_login.current_user, Transactions.notified_status is False)).all()
+    transactionsRaw = session.query(Transactions).all()
+    transactions = []
+
+    for transaction in transactionsRaw:
+        if transaction.seller.id == flask_login.current_user.id and not transaction.notified_status:
+            transactions.append(transaction)
+
     notifications = []
 
     for transaction in transactions:
         transaction.notified_status = True
-        notifications.append(get_buyer_name(transaction.client) + " would like to buy a swipe from you!")
-        notify(get_buyer_name(transaction.client) + " would like to buy a swipe from you!")
+        notifications.append(transaction.client.name + " would like to buy a swipe from you!")
 
     return jsonify(result=notifications)
 
@@ -417,6 +425,9 @@ def createTransaction(buyer_id, seller_id):
     client = session.query(User).filter_by(id=buyer_id).first()
 
     new_transaction = Transactions(seller=seller, client=client)
+
+    notify(seller.name + " would like to buy a swipe from you!")
+
     session.add(new_transaction)
     session.commit()
 
