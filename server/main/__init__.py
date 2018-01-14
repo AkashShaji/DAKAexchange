@@ -205,8 +205,8 @@ def signup():
 def view_profile(user_id):
     user = session.query(User).filter_by(id=user_id).first()
     is_seller = session.query(Transactions).filter_by(seller=user).all()
-    is_involved = session.query(Transactions).filter(Transactions.seller == user, Transactions.client != None).all()
-    is_involved += session.query(Transactions).filter(Transactions.client == user).all()
+    # is_involved = session.query(Transactions).filter(Transactions.seller == user, Transactions.client != None).all()
+    is_involved = session.query(Transactions).filter(Transactions.client == user).all()
 
     try:
         stime = user.start_time.strftime("%I:%M %p")
@@ -217,6 +217,9 @@ def view_profile(user_id):
         etime = user.end_time.strftime("%I:%M %p")
     except:
         etime = None
+
+    print(len(is_seller))
+    print(len(is_involved))
 
     return render_template('profile.html', user=user, stime=stime, etime=etime, seller=is_seller, involved=is_involved) #, image=user.profile_pic
 
@@ -386,16 +389,24 @@ def buy():
 @app.route("/getOpenTransactions")
 def getOpenTransactions():
 
-    if not isinstance(flask_login.current_user, User):
+    try:
+        flask_login.current_user.id
+    except:
         return jsonify(result=[])
 
-    transactions = session.query(Transactions).filter(and_(Transactions.seller == flask_login.current_user.id, Transactions.notified_status == False)).all()
+#    transactions = session.query(Transactions).filter(and_(Transactions.seller == flask_login.current_user, Transactions.notified_status is False)).all()
+    transactionsRaw = session.query(Transactions).all()
+    transactions = []
+
+    for transaction in transactionsRaw:
+        if transaction.seller.id == flask_login.current_user.id and not transaction.notified_status:
+            transactions.append(transaction)
+
     notifications = []
 
     for transaction in transactions:
         transaction.notified_status = True
-        notifications.append(get_buyer_name(transaction.client) + " would like to buy a swipe from you!")
-        notify(get_buyer_name(transaction.client) + " would like to buy a swipe from you!")
+        notifications.append(transaction.client.name + " would like to buy a swipe from you!")
 
     return jsonify(result=notifications)
 
@@ -414,6 +425,9 @@ def createTransaction(buyer_id, seller_id):
     client = session.query(User).filter_by(id=buyer_id).first()
 
     new_transaction = Transactions(seller=seller, client=client)
+
+    notify(seller.name + " would like to buy a swipe from you!")
+
     session.add(new_transaction)
     session.commit()
 
