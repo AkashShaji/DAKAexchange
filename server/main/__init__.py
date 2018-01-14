@@ -313,7 +313,7 @@ def redeem_swipe(transaction_id):
     transaction = session.query(Transactions).filter_by(id=transaction_id).first()
     transaction.swipe_redeemed = True
 
-    session.add(transaction)
+    session.delete(transaction)
     session.commit()
 
     return redirect(url_for('index'))
