@@ -121,7 +121,7 @@ def login():
             return redirect(url_for('view_profile', user_id=potential_user.id))
         else:
             flash("Wrong username or password")
-            redirect(url_for('login'))
+            return redirect(url_for('login'))
     else:
         return render_template('login.html')
 
@@ -231,7 +231,6 @@ def view_profile(user_id):
         etime = None
 
     return render_template('profile.html', user=user, stime=stime, etime=etime, seller=is_seller, involved=is_involved) #, image=user.profile_pic
-
 # def allowed_file(filename):
 #     return '.' in filename and \
 #            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -418,8 +417,8 @@ def notify(s):
 
 @app.route("/<buyer_id>/<seller_id>/createTransaction", methods=['GET', 'POST'])
 def createTransaction(buyer_id, seller_id):
-    seller = session.query(User).filter(User.id == seller_id).first()
-    client = session.query(User).filter(User.id == buyer_id).first()
+    seller = session.query(User).filter_by(id=seller_id).first()
+    client = session.query(User).filter_by(id=buyer_id).first()
 
     new_transaction = Transactions(seller=seller, client=client)
 
