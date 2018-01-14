@@ -342,6 +342,7 @@ def buy():
         return render_template("buy.html", sellers=[], time=timeRaw)
     else:
         current_time = datetime.datetime.now()
-        time = str(current_time.hour) + ":" + str(current_time.minute)
+        time = current_time.strftime("%H:%M")
+
         return render_template("buy.html", sellers=[], time=time)
 
