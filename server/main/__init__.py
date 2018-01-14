@@ -299,19 +299,33 @@ def change_password(user_id):
 
 @app.route('/<transaction_id>/accept_request', methods=['GET'])
 def accept_request(transaction_id):
-    user_requests = session.query(Transactions).filter_by(client=user).all()
-    return "This is where a user can see the requests they've sent to other users"
+    transaction = session.query(Transactions).filter_by(id=transaction_id).first()
+    transaction.accepted_status = True
+
+    session.add(transaction)
+    session.commit()
+
+    return redirect(url_for('index'))
 
 
 @app.route('/<transaction_id>/redeem_swipe', methods=['GET'])
 def redeem_swipe(transaction_id):
-    user_requests = session.query(Transactions).filter_by(seller=user).all()
-    return "This is where a user can see the requests they've received from other users"
+    transaction = session.query(Transactions).filter_by(id=transaction_id).first()
+    transaction.swipe_redeemed = True
+
+    session.add(transaction)
+    session.commit()
+
+    return redirect(url_for('index'))
 
 @app.route('/<transaction_id>/cancel_transaction', methods=['GET'])
 def cancel_transaction(transaction_id):
-    pass
+    transaction = session.query(Transactions).filter_by(id=transaction_id).first()
 
+    session.delete(transaction)
+    session.commit()
+
+    return redirect(url_for('index'))
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
