@@ -218,6 +218,9 @@ def view_profile(user_id):
     except:
         etime = None
 
+    print(len(is_seller))
+    print(len(is_involved))
+
     return render_template('profile.html', user=user, stime=stime, etime=etime, seller=is_seller, involved=is_involved) #, image=user.profile_pic
 
 # def allowed_file(filename):
