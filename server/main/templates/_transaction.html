@@ -1,0 +1,22 @@
+<div class="media">
+  <div class="media-body">
+    <div class="row">
+      <div class="col-md-6">Seller: <h4>{{ transaction.seller.name }}</h4></div>
+      <div class="col-md-6"><h5>{{ transaction.seller.email }}</h5></div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6"><p>{{ transaction.seller.swipe_price }}</p></div>
+      <div class="col-md-6">
+        <p>
+          Available: {{ transaction.seller.get_start_time() }} to {{ transaction.seller.get_end_time() }}
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6"><p>Client: {{ transaction.client.name }}</p></div>
+      <div class="col-md-6"><p>{{ transaction.client.email }}</p></div>
+    </div>
+  </div>
+</div>

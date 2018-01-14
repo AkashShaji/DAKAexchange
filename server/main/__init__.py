@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_
 from functools import wraps
 
-from server.main.models import Base, User, Transactions
+from main.models import Base, User, Transactions
 import random, string, urllib3, json, codecs, datetime, os
 
 import flask_login

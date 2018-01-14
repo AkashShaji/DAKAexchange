@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey, ForeignKeyConstraint, PickleType
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
@@ -37,6 +37,12 @@ class User (Base):
     def get_id(self):
         return str(self.id)
 
+    def get_start_time(self):
+        return self.start_time.strftime("%I:%M %p")
+
+    def get_end_time(self):
+        return self.end_time.strftime("%I:%M %p")
+
     @property
     def serialize(self):
         return {
@@ -58,10 +64,12 @@ class Transactions(Base):
     accepted_status = Column(Boolean)
     swipe_redeemed = Column(Boolean)
 
-    client = Column(Integer, ForeignKey('users.id'))
-    users = relationship(User, foreign_keys=[client])
-    seller = Column(Integer, ForeignKey('users.id'))
-    users = relationship(User, foreign_keys=[seller])
+    client = Column(PickleType)
+    seller = Column(PickleType)
+    # client = Column(PickleType, ForeignKey('users'))
+    # users = relationship(User, foreign_keys=[client])
+    # seller = Column(PickleType, ForeignKey('users'))
+    # users = relationship(User, foreign_keys=[seller])
 
     meet_time = Column(DateTime)
 
