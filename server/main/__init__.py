@@ -6,11 +6,11 @@ from flask import session as login_session
 from server.main.models import Base, User, Transactions
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import and_
 from functools import wraps
 
 from server.main.models import User, Base
 import random, string, urllib3, json, codecs, datetime
-
 import flask_login
 from flask_login import LoginManager, login_user
 
@@ -104,6 +104,10 @@ def login():
         email = request.form['email']
         psk = request.form['password']
 
+        if session.query(User).filter(User.email == email).count() == 0:
+            flash("Wrong username or password")
+            return redirect(url_for('login'))
+
         potential_user = session.query(User).filter(User.email == email).first()
         if potential_user.verify_password(psk):
             login_user(potential_user, force=True)
@@ -185,9 +189,10 @@ def signup():
         #
         # server.quit()
 
-        return redirect(url_for('login'))
+        return redirect(url_for('view_profile'))
     else:
         return render_template('signup.html')
+
 
 @app.route('/<user_id>/profile', methods=['GET', 'POST'])
 def view_profile(user_id):
@@ -238,6 +243,27 @@ def user_searched(selected_user):
 def request_user(selected_user):
     return "This is where users can request another user to sell to/buy from"
 
-@app.route("/buy", methods=['GET','POST'])
+
+@app.route("/buy", methods=['GET', 'POST'])
 def buy():
-    return render_template("buy.html")
+    if request.method == "POST":
+        timeRaw = request.form['timeSearch']
+        time = datetime.datetime.strptime(timeRaw, '%H:%M')
+
+        sellers = session.query(User).filter(and_(User.start_time.time() <= time.time(), User.end_time.time() >= time.time())).all()
+        sellers_data = []
+
+        for seller in sellers:
+            data = []
+
+            data.append("Profile Picture")
+            data.append(seller.name)
+            data.append(seller.swipe_price)
+
+            sellers_data.append(data)
+
+        return render_template("buy.html", sellers=[], time=timeRaw)
+    else:
+        current_time = datetime.datetime.now()
+        time = str(current_time.hour) + ":" + str(current_time.minute)
+        return render_template("buy.html", sellers=[], time=time)

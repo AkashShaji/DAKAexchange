@@ -1,55 +1,68 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="col" >
-    <div class="text-lg-center">
-        Buy a swipe
-    </div>
+<div class="grid">
+    <form action="{{  url_for('buy') }}" method="POST">
+        <div class="row">
+            <div class="col" >
+                <div class="text-lg-center">
+                    <div class="text-center">
+                        <h2>Buy a swipe</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 10px">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-3">
+                    <div class="text-right">
+                        Approximate Swipe In time
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <input name="timeSearch" id="timeSearch" type="time" value="{{ time }}">
+                </div>
+                <div class="col-sm-3"></div>
+            </div>
+            <div class="row mt-sm-5" style="padding-top: 10px">
+                <div class="col-sm-5"></div>
+                <div class="col-sm-2">
+                    <input style="background-color: #660000" id="searchButton" type="submit" class="btn btn-primary btn-block" >
+                </div>
+                <div class="col-sm-5"></div>
+            </div>
+        </div>
+    </form>
 </div>
-<div class="row">
-    <div class="col-6">
-        <div class="text-right">
-            Approximate Swipe In time:
+
+<div class="row" style="padding-top: 10px; padding-bottom: 10px">
+    <div class="col-sm-12">
+        <div class="text-center">
+            <h3>Available Swipes</h3>
         </div>
     </div>
-    <div class="col-4">
-        <div class="text-left">
-            <input name="timeSearch" id="timeSearch" type="date">
-        </div>
-    </div>
-    <div class="col-2">
-        <button style="background-color: #660000" id="searchButton" type="submit" class="btn btn-primary btn-block">Search</button>
-    </div>
 </div>
 
-<table class="table table-striped" id="swipesTable">
-    <tbody></tbody>
-</table>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#searchButton').click(function () {
-            $.getJSON($SCRIPT_ROOT + "/getAvailableSellers", {
-                time: $("#timeSearch").value
-            }, function (data) {
-                $('#swipesTable tr').remove();
-
-                if(data.length === 0) {
-                    $('table tbody').append("<center>Sorry, no swipes available!</center>");
-                }
-                else {
-                    for(var i = 0; i < data.length; i++) {
-                        var markup = "<tr><td>" + data[i][0] + "</td>" +
-                            "<td>" + data[i][1] + "</td>" +
-                            "<td>" + data[i][4] + "</td>" +
-                            "<td> Swipe me! </tr>";
-
-                        $('table tbody').append(markup);
-                    }
-                }
-            });
-        });
-    });
-</script>
+{% if sellers|length == 0 %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="text-center">
+                Unfortunately, there are no sellers for that time :(
+            </div>
+        </div>
+    </div>
+{% else %}
+    <table class="table table-striped" id="swipesTable">
+        <tbody>
+            {% for seller in sellers %}
+                <tr>
+                    <td>{{ seller[0] }}</td>
+                    <td>{{ seller[1] }}</td>
+                    <td>{{ seller[2] }}</td>
+                    <td>Swipe me in!</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 
 {% endblock %}
